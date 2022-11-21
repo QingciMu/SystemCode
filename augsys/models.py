@@ -38,7 +38,8 @@ class Methods(models.Model):
     id=models.AutoField(primary_key=True,null=False,unique=True)
     taskName = models.CharField(max_length=255,null=False)
     method = models.CharField(max_length=255,null=False)
-
+    class Meta:
+        db_table = 'Methods'
 class DeeptestParams(models.Model):
     taskName = models.CharField(primary_key=True,max_length=255,null=False)
     tranXmin = models.IntegerField(null=True)

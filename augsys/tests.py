@@ -13,5 +13,9 @@ import json
 from augment.wsgi import *
 from augsys import models
 import ast
-
-models.AugTask.objects.filter(name='test1').update(augType = 'DeepTest')
+lst = {}
+taskName = 'test1'
+s = 'tranXmin'
+paramsInfo = eval(serializers.serialize("json", models.DeeptestParams.objects.filter(taskName=taskName)))
+lst['tranXin'] = paramsInfo[0]['fields']['tranXmin']
+print(lst)

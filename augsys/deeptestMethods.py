@@ -144,8 +144,8 @@ def deeptestAug(data):
     label_list = sorted(glob.glob(raw_label))
     file_num = len(methods) * fold * len(img_list)
     #  任务开始后对任务的数据进行保存 任务状态为Running
-    # new_task = models.AugTask(name=taskName,desc=taskDesc,fileType='Image',num=file_num,augType='DeepTest',status='Running')
-    # new_task.save()
+    new_task = models.AugTask(name=taskName,desc=taskDesc,fileType='Image',dataset=dataset,times=fold,num=file_num,augType='DeepTest',status='Running')
+    new_task.save()
     d1=d2=d3=d4=d5=d6=d7 = False
     models.DeeptestParams(taskName = taskName).save()
     if('translation' in  methods):
@@ -154,6 +154,7 @@ def deeptestAug(data):
         tranXmax = int(data['trans_x']['max'])
         tranYmin = int(data['trans_y']['min'])
         tranYmax = int(data['trans_y']['max'])
+        models.Methods(taskName=taskName,method='translation').save()
         models.DeeptestParams.objects.filter(taskName=taskName).update(tranXmin=tranXmin,tranXmax=tranXmax,tranYmin=tranYmin,tranYmax=tranYmax)
     if('scale' in methods):
         d2 = True
@@ -161,24 +162,30 @@ def deeptestAug(data):
         scaleXmax = int(data['scale_x']['max'])
         scaleYmin = int(data['scale_y']['min'])
         scaleYmax = int(data['scale_y']['max'])
+        models.Methods(taskName=taskName,method='scale').save()
         models.DeeptestParams.objects.filter(taskName=taskName).update(scaleXmin=scaleXmin,scaleXmax=scaleXmax,scaleYmin=scaleYmin,scaleYmax=scaleYmax)
     if('shear' in methods):
         d3 = True
+        models.Methods(taskName=taskName,method='shear').save()
     if ('rotation' in methods):
         d4 = True
         degreeMin = int(data['bias']['min'])
         degreeMax = int(data['bias']['max'])
+        models.Methods(taskName=taskName,method='rotation').save()
         models.DeeptestParams.objects.filter(taskName=taskName).update(degreeMin=degreeMin,degreeMax=degreeMax)
     if ('contrast' in methods):
         d5 = True
+        models.Methods(taskName=taskName,method='contrast').save()
     if ('brightness' in methods):
         d6 = True
         biasMin = int(data['bias']['min'])
         biasMax = int(data['bias']['max'])
+        models.Methods(taskName=taskName,method='brightness').save()
         models.DeeptestParams.objects.filter(taskName=taskName).update(biasMin=biasMin,biasMax=biasMax)
     if ('blur' in methods):
         d7 = True
         strategy = data['strategy']
+        models.Methods(taskName=taskName,method='blur').save()
         for i in range(len(strategy)):
             models.Strategy(taskName=taskName,strategy=strategy[i]).save()
     if not os.path.exists(aug_path):

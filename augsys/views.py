@@ -245,16 +245,32 @@ def getAugDetail(request):
             data = json.loads(request.body.decode('utf-8'))
             taskName = data['taskName']
             type = data['type']
+            result = {}
+            taskResult = {}
+            paramsResult = {}
             taskInfo = eval(serializers.serialize("json", models.AugTask.objects.filter(name=taskName)))
             if(type == 'DeepTest'):
                 paramsInfo = eval(serializers.serialize("json", models.DeeptestParams.objects.filter(taskName=taskName)))
-            result = {}
-            result['taskName'] = taskInfo[0]['pk']
-            result['taskDesc'] = taskInfo[0]['fields']['desc']
-            result['dataset'] = taskInfo[0]['fields']['dataset']
-            result['times'] = taskInfo[0]['fields']['times']
-            result['dataset'] = taskInfo[0]['fields']['dataset']
-
+                paramsLst = ['tranXmin','tranXmax','tranYmin','tranYmax','scaleXmin','scaleXmax','scaleYmin','scaleYmax','degreeMin','degreeMax','biasMin','biasMax']
+                for s in paramsLst:
+                    paramsResult[s] = paramsInfo[0]['fields'][s]
+                strategy = []
+                strategyinfo = eval(serializers.serialize("json", models.Strategy.objects.filter(taskName=taskName)))
+                for i in range(len(strategyinfo)):
+                    strategy.append(strategyinfo[i]['fields']['strategy'])
+                result['strategy'] = strategy
+            methodInfo = eval(serializers.serialize("json", models.Methods.objects.filter(taskName=taskName)))
+            lstMethod = []
+            for i in range(len(methodInfo)):
+                lstMethod.append(methodInfo[i]['fields']['method'])
+            taskResult['taskName'] = taskInfo[0]['pk']
+            taskResult['taskDesc'] = taskInfo[0]['fields']['desc']
+            taskResult['dataset'] = taskInfo[0]['fields']['dataset']
+            taskResult['type'] = taskInfo[0]['fields']['augType']
+            taskResult['times'] = taskInfo[0]['fields']['times']
+            taskResult['lstMethod'] = lstMethod
+            result['taskInfo'] = taskResult
+            result['paramsInfo'] = paramsResult
             response['code'] = 200
             response['data'] = result
             response['msg'] = 'success'
