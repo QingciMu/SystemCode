@@ -106,6 +106,9 @@ def deleteModel(request):
         if request.method == 'POST':
             data = json.loads(request.body.decode('utf-8'))
             modelId = data['id']
+            name = data['name']
+            modelPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Model',name)
+            os.remove(modelPath)
             models.Model.objects.filter(modelId = modelId).delete()
             cursor = connection.cursor()
             cursor.execute('alter table Model drop modelId')

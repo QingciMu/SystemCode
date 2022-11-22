@@ -32,7 +32,7 @@
             <el-input v-model="search" size="mini" placeholder="Please enter a keyword to search" />
           </template>
           <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row.name)">Delete</el-button>
             <el-button size="mini" type="primary" @click="handleDownload(scope.row)">Download</el-button>
           </template>
         </el-table-column>
@@ -63,7 +63,8 @@ export default {
       hrList: [],
       delVisible: false,
       index: 0,
-      isLoading: false
+      isLoading: false,
+      modelName: ''
     }
   },
   mounted () {
@@ -89,9 +90,10 @@ export default {
     closeDel () {
       this.delVisible = false
     },
-    handleDelete (index, row) {
+    handleDelete (index, name) {
       this.delVisible = true
       this.index = index + 1
+      this.modelName = name
     },
     showMessage (parms) {
       this.$message({
@@ -101,7 +103,7 @@ export default {
     },
     confirmDelete () {
       this.isLoading = true
-      deleteModel({ 'id': this.index }).then(
+      deleteModel({ 'id': this.index, 'name': this.modelName }).then(
         JSON => {
           if (JSON.data.data) {
             this.isLoading = false
