@@ -18,6 +18,8 @@ import zipfile
 import glob
 from augsys.deeptestMethods import *
 from augsys.getFileSize import *
+import shutil
+
 
 
 
@@ -170,39 +172,6 @@ def deleteDataset(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
-def deepTask(request):
-    data = json.loads(request.body.decode('utf-8'))
-    response = {}
-    try:
-        deeptestAug(data)
-        response['data'] = True
-        response['msg'] = 'success'
-    except Exception as e:
-        response['data'] = False
-        response['msg'] = str(e)
-    return JsonResponse(response)
-
-def getTask(request):
-    response = {}
-    try:
-        modelDetail = eval(serializers.serialize("json", models.AugTask.objects.all()))
-        response['code'] = 200
-        result=[]
-        for i in range(len(modelDetail)):
-            temp = {}
-            temp['taskName'] = modelDetail[i]['pk']
-            temp['fileType'] = modelDetail[i]['fields']['fileType']
-            temp['fileNum'] = modelDetail[i]['fields']['num']
-            temp['Method'] = modelDetail[i]['fields']['augType']
-            temp['Status'] = modelDetail[i]['fields']['status']
-            temp['createTime'] = modelDetail[i]['fields']['startTime']
-            result.append(temp)
-        response['data'] = result
-        response['msg'] = 'success'
-    except Exception as e:
-        response['msg'] = str(e)
-    return JsonResponse(response)
-
 def getInstance(request):
     response = {}
     try:
@@ -237,6 +206,41 @@ def getInstance(request):
         response['data'] = []
         response['msg'] = str(e)
     return JsonResponse(response)
+
+def deepTask(request):
+    data = json.loads(request.body.decode('utf-8'))
+    response = {}
+    try:
+        deeptestAug(data)
+
+        response['data'] = True
+        response['msg'] = 'success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+def getTask(request):
+    response = {}
+    try:
+        modelDetail = eval(serializers.serialize("json", models.AugTask.objects.all()))
+        response['code'] = 200
+        result=[]
+        for i in range(len(modelDetail)):
+            temp = {}
+            temp['taskName'] = modelDetail[i]['pk']
+            temp['fileType'] = modelDetail[i]['fields']['fileType']
+            temp['fileNum'] = modelDetail[i]['fields']['num']
+            temp['Method'] = modelDetail[i]['fields']['augType']
+            temp['Status'] = modelDetail[i]['fields']['status']
+            temp['createTime'] = modelDetail[i]['fields']['startTime']
+            result.append(temp)
+        response['data'] = result
+        response['msg'] = 'success'
+    except Exception as e:
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
 
 def getAugDetail(request):
     response = {}
@@ -279,6 +283,32 @@ def getAugDetail(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def deleteAugTask(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            taskName =data['taskName']
+            type = data['type']
+            dirPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',taskName)
+            shutil.rmtree(dirPath)
+            cursor = connection.cursor()
+            if(type == 'DeepTest'):
+                models.AugTask.objects.filter(name=taskName).delete()
+                models.Methods.objects.filter(taskName=taskName).delete()
+                models.DeeptestParams.objects.filter(taskName=taskName).delete()
+                models.Strategy.objects.filter(taskName=taskName).delete()
+                cursor.execute('alter table Methods drop id')
+                cursor.execute('alter table Methods add id int not null primary key auto_increment first')
+                cursor.execute('alter table strategy drop id')
+                cursor.execute('alter table strategy add id int not null primary key auto_increment first')
+            response['code'] = 200
+            response['data'] = True
+            response['msg'] = 'success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
 
 
 

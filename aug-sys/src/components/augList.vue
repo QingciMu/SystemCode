@@ -40,7 +40,7 @@
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                @click="handleDelete(scope.row.taskName, scope.row.Method)">Delete</el-button>
             </template>
           </template>
         </el-table-column>
@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import { getTask, deleteTask } from '../api/api.js'
+import { getTask, deleteAugTask } from '../api/api.js'
 export default {
   name: 'augList',
   data () {
@@ -68,8 +68,9 @@ export default {
       tableData: [],
       search: '',
       delVisible: false,
-      index: 0,
-      isLoading: false
+      isLoading: false,
+      deleteName: '',
+      deleteType: ''
     }
   },
   mounted () {
@@ -90,9 +91,10 @@ export default {
     closeDel () {
       this.delVisible = false
     },
-    handleDelete (index, row) {
+    handleDelete (taskName, type) {
       this.delVisible = true
-      this.index = index + 1
+      this.deleteName = taskName
+      this.deleteType = type
     },
     showMessage (parms) {
       this.$message({
@@ -110,13 +112,13 @@ export default {
     },
     confirmDelete () {
       this.isLoading = true
-      deleteTask({ 'id': this.index }).then(
+      deleteAugTask({ 'taskName': this.deleteName, 'type': this.deleteType }).then(
         JSON => {
           if (JSON.data.data) {
             this.isLoading = false
             this.closeDel()
             this.showMessage({ message: 'Task deleted successfully', type: 'success' })
-            this.getDatasetInfo()
+            this.getTaskInfo()
           } else {
             this.isLoading = false
             this.closeDel()

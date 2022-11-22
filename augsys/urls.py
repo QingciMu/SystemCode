@@ -13,5 +13,6 @@ urlpatterns = [
     re_path(r'deepTask',views.deepTask),
     re_path(r'getTask',views.getTask),
     re_path(r'getAugDetail',views.getAugDetail),
+    re_path(r'deleteAugTask',views.deleteAugTask),
     re_path(r'getInstance',views.getInstance)
 ]

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="task-body">
     <div class="title">Task Detail</div>
     <div class = "task-detail">
       <el-form label-width="300px" size="mini">
@@ -123,7 +123,7 @@ export default {
           this.times = times
           this.lstMethod = lstMethod
           for (let i = 0; i < lstMethod.length; i++) {
-            if (i !== lstMethod.length-1) {
+            if (i !== lstMethod.length - 1) {
               this.strMethod += lstMethod[i]
               this.strMethod += '、'
             } else {
@@ -153,6 +153,9 @@ export default {
 
 </script>
 <style scoped>
+.task-body {
+  margin-left: 40px;
+}
 .title {
   font-family: sans-serif;
   font-size: 25px;

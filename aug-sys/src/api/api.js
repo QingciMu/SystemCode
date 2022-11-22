@@ -11,7 +11,7 @@ const downloadModelUrl = ip + 'downloadModel'
 const deleteDataUrl = ip + 'deleteDataset'
 const deepTaskUrl = ip + 'deepTask'
 const taskUrl = ip + 'getTask'
-const deleteTaskUrl = ip + 'deleteTask'
+const deleteAugTaskUrl = ip + 'deleteAugTask'
 const getAugDetailUrl = ip + 'getAugDetail'
 const instanceListUrl = ip + 'getInstance'
 export const getDatasetDetail = () => {
@@ -41,8 +41,8 @@ export const showMessage = (parms) => {
 export const getTask = () => {
   return axios.get(taskUrl)
 }
-export const deleteTask = (parms) => {
-  return axios.post(deleteTaskUrl, parms)
+export const deleteAugTask = (parms) => {
+  return axios.post(deleteAugTaskUrl, parms)
 }
 export const getAugDetail = (parms) => {
   return axios.post(getAugDetailUrl, parms)
