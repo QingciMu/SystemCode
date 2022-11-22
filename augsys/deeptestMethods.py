@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 from augsys import models
-
+from augsys.generalMethod import *
 
 
 def translation(imgName,lblName,tx,ty,times,fileName,aug_img_path,aug_label_path):
@@ -138,6 +138,7 @@ def deeptestAug(data):
     raw_img = os.path.join(head_path,dataset,'image/*')
     raw_label = os.path.join(head_path,dataset,'label/*')
     aug_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',taskName)
+    zip_path =os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',taskName+'.zip')
     aug_img_path = os.path.join(aug_path,'image')
     aug_label_path = os.path.join(aug_path,'label')
     img_list = sorted(glob.glob(raw_img))
@@ -223,6 +224,7 @@ def deeptestAug(data):
             if(d7):
                 strategy_now = random.choice(strategy)
                 blur(imgPath,labelPath,strategy_now,i,imgName,aug_img_path,aug_label_path)
+    zipDir(aug_path,zip_path)
     task_data = models.AugTask.objects.get(name=taskName)
     task_data.status = 'Success'
     task_data.save()

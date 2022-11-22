@@ -292,6 +292,8 @@ def deleteAugTask(request):
             type = data['type']
             dirPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',taskName)
             shutil.rmtree(dirPath)
+            zipPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',taskName+'.zip')
+            os.remove(zipPath)
             cursor = connection.cursor()
             if(type == 'DeepTest'):
                 models.AugTask.objects.filter(name=taskName).delete()

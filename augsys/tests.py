@@ -1,5 +1,6 @@
 import glob
 import os.path
+import shutil
 
 import cv2
 import torch
@@ -13,9 +14,6 @@ import json
 from augment.wsgi import *
 from augsys import models
 import ast
-lst = {}
-taskName = 'test1'
-s = 'tranXmin'
-paramsInfo = eval(serializers.serialize("json", models.DeeptestParams.objects.filter(taskName=taskName)))
-lst['tranXin'] = paramsInfo[0]['fields']['tranXmin']
-print(lst)
+
+dirPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult', 'test1.zip')
+os.remove(dirPath)
