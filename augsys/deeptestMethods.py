@@ -148,7 +148,7 @@ def deeptestAug(data):
     new_task = models.AugTask(name=taskName,desc=taskDesc,fileType='Image',dataset=dataset,times=fold,num=file_num,augType='DeepTest',status='Running')
     new_task.save()
     d1=d2=d3=d4=d5=d6=d7 = False
-    models.DeeptestParams(taskName = taskName).save()
+    models.DeeptestParams(taskName = taskName,tranXmin=0,tranXmax=0,tranYmin=0,tranYmax=0,scaleXmin=0,scaleXmax=0,scaleYmin=0,scaleYmax=0,degreeMin=0,degreeMax=0,biasMin=0,biasMax=0).save()
     if('translation' in  methods):
         d1 = True
         tranXmin = int(data['trans_x']['min'])
