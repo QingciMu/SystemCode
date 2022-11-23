@@ -168,7 +168,7 @@
         </el-form-item>
         </template>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">Start Task</el-button>
+          <el-button type="primary" :loading="isLoading" @click="submitForm('ruleForm')">Start Task</el-button>
           <el-button @click="resetForm('ruleForm')">Reset</el-button>
         </el-form-item>
       </el-form>
@@ -176,11 +176,12 @@
   </div>
 </template>
 <script>
-import { getDatasetDetail, deepTask } from '../api/api.js'
+import { getDatasetDetail, deepTask, showMessage } from '../api/api.js'
 export default {
   name: 'deeptest',
   data () {
     return {
+      isLoading: false,
       ruleForm: {
         dataset: '',
         taskName: '',
@@ -291,7 +292,7 @@ export default {
   },
   methods: {
     jumpList () {
-      this.$router.push({path: '/dataset'})
+      this.$router.push({path: '/success', query: {type: 'DeepTest'}})
     },
     getDataList () {
       getDatasetDetail().then(
@@ -311,7 +312,18 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          deepTask(this.ruleForm)
+          this.isLoading = true
+          deepTask(this.ruleForm).then(
+            JSON => {
+              if (JSON.data.data) {
+                this.isLoading = false
+                this.jumpList()
+              }
+            }
+          ).catch(e => {
+            this.isLoading = false
+            showMessage({ message: e.msg, type: 'error' })
+          })
         } else {
           return false
         }
