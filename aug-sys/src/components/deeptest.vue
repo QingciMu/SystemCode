@@ -291,7 +291,7 @@ export default {
     this.getDataList(this.ruleForm)
   },
   methods: {
-    jumpList () {
+    jumpSuccess () {
       this.$router.push({path: '/success', query: {type: 'DeepTest'}})
     },
     getDataList () {
@@ -317,7 +317,7 @@ export default {
             JSON => {
               if (JSON.data.data) {
                 this.isLoading = false
-                this.jumpList()
+                this.jumpSuccess()
               }
             }
           ).catch(e => {
