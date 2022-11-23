@@ -54,7 +54,7 @@
 <script>
 import { getModel, deleteModel } from '../api/api.js'
 export default {
-  name: 'deeptest',
+  name: 'model',
   data () {
     return {
       tableData: [],
