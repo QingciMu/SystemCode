@@ -8,6 +8,7 @@ import model from '@/components/model'
 import augList from '@/components/augList'
 import instanceList from '@/components/instanceList'
 import augTaskDetail from '@/components/augTaskDetail'
+import success from '@/components/success'
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/augTaskDetail',
       name: 'augTaskDetail',
       component: augTaskDetail
+    },
+    {
+      path: '/success',
+      name: 'success',
+      component: success
     }
   ]
 })
