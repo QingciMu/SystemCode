@@ -10,6 +10,7 @@ const deleteModelUrl = ip + 'deleteModel'
 const downloadModelUrl = ip + 'downloadModel'
 const deleteDataUrl = ip + 'deleteDataset'
 const deepTaskUrl = ip + 'deepTask'
+const segTaskUrl = ip + 'segTask'
 const taskUrl = ip + 'getTask'
 const deleteAugTaskUrl = ip + 'deleteAugTask'
 const getAugDetailUrl = ip + 'getAugDetail'
@@ -31,6 +32,9 @@ export const deleteDataset = (parms) => {
 }
 export const deepTask = (parms) => {
   return axios.post(deepTaskUrl, parms)
+}
+export const segTask = (parms) => {
+  return axios.post(segTaskUrl, parms)
 }
 export const showMessage = (parms) => {
   this.$message({

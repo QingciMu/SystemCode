@@ -11,8 +11,6 @@ import json
 import time
 
 starttime = time.time() # 开始记录
-for i in range(1000):
-    flag = True
 def augmentlist():
     with open('../obj_ifm.txt') as f:
         objList = eval(f.read())

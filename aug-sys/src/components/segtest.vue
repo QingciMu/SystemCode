@@ -27,146 +27,6 @@
             <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <template v-if="ruleForm.methods.includes('translation')">
-          <div class="method-title">Method Translation</div>
-          <el-form-item label="Select the range of X-axis translation" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.trans_x.min"
-                size="small"
-                :min="10"
-                :max="100"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.trans_x.max"
-                size="small"
-                :min="10"
-                :max="100"/>
-            </div>
-          </el-form-item>
-          <el-form-item label="Select the range of Y-axis translation" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.trans_y.min"
-                size="small"
-                :min="10"
-                :max="100"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.trans_y.max"
-                size="small"
-                :min="10"
-                :max="100"/>
-            </div>
-          </el-form-item>
-        </template>
-        <template v-if="ruleForm.methods.includes('scale')">
-          <div class="method-title">Method Scale</div>
-          <el-form-item label="Select the range of X-axis scale" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.scale_x.min"
-                size="small"
-                :min="2"
-                :max="6"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.scale_x.max"
-                size="small"
-                :min="2"
-                :max="6"/>
-            </div>
-          </el-form-item>
-          <el-form-item label="Select the range of Y-axis scale" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.scale_y.min"
-                size="small"
-                :min="2"
-                :max="6"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.scale_y.max"
-                size="small"
-                :min="2"
-                :max="6"/>
-            </div>
-          </el-form-item>
-        </template>
-        <!--
-        <template v-if="ruleForm.methods.includes('shear')">
-          <div class="method-title">Method Shear</div>
-          <el-form-item label="Choose augment methods" prop="methods">
-          <el-select v-model="ruleForm.methods" multiple placeholder="Please Choose Methods" class="select-form">
-            <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        </template>
-        <template v-if="ruleForm.methods.includes('contrast')">
-          <div class="method-title">Method Contrast</div>
-          <el-form-item label="Choose augment methods" prop="methods">
-          <el-select v-model="ruleForm.methods" multiple placeholder="Please Choose Methods" class="select-form">
-            <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        </template>
-        -->
-        <template v-if="ruleForm.methods.includes('rotation')">
-          <div class="method-title">Method Rotation</div>
-          <el-form-item label="Select the range of rotation degree" prop="degree" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.degree.min"
-                size="small"
-                :min="3"
-                :max="30"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.degree.max"
-                size="small"
-                :min="3"
-                :max="30"/>
-            </div>
-          </el-form-item>
-        </template>
-        <template v-if="ruleForm.methods.includes('brightness')">
-          <div class="method-title">Method Brightness</div>
-          <el-form-item label="Select the range of bias" prop="bias" required>
-            <div style="display:flex;width:300px;justify-content: space-between;align-items: center;">
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.bias.min"
-                size="small"
-                :min="10"
-                :max="100"/>
-              <div>-</div>
-              <el-input-number
-                class="select-num"
-                v-model="ruleForm.bias.max"
-                size="small"
-                :min="10"
-                :max="100"/>
-            </div>
-          </el-form-item>
-        </template>
-        <template v-if="ruleForm.methods.includes('blur')">
-          <div class="method-title">Method Blur</div>
-          <el-form-item label="Choose blur strategy" prop="strategy" required>
-          <el-select v-model="ruleForm.strategy" multiple placeholder="Please Choose Strategy" class="select-form">
-            <el-option v-for="item in strategyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        </template>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">Start Task</el-button>
           <el-button @click="resetForm('ruleForm')">Reset</el-button>
@@ -176,9 +36,9 @@
   </div>
 </template>
 <script>
-import { getDatasetDetail, deepTask } from '../api/api.js'
+import { getDatasetDetail, segTask } from '../api/api.js'
 export default {
-  name: 'deeptest',
+  name: 'segtest',
   data () {
     return {
       ruleForm: {
@@ -186,32 +46,7 @@ export default {
         taskName: '',
         taskDesc: '',
         fold: null,
-        methods: [],
-        trans_x: {
-          min: 10,
-          max: 100
-        },
-        trans_y: {
-          min: 10,
-          max: 100
-        },
-        scale_x: {
-          min: 2,
-          max: 6
-        },
-        scale_y: {
-          min: 2,
-          max: 6
-        },
-        degree: {
-          min: 3,
-          max: 30
-        },
-        bias: {
-          min: 10,
-          max: 100
-        },
-        strategy: []
+        methods: []
       },
       DataOptions: [],
       foldOptions: [
@@ -238,50 +73,20 @@ export default {
       ],
       methodOptions: [
         {
-          value: 'translation',
-          label: 'translation'
+          value: 'Random',
+          label: 'Random'
         },
         {
-          value: 'scale',
-          label: 'scale'
+          value: 'Random Instance',
+          label: 'Random Instance'
         },
         {
-          value: 'shear',
-          label: 'shear'
+          value: 'Random Insertion',
+          label: 'Random Insertion'
         },
         {
-          value: 'contrast',
-          label: 'contrast'
-        },
-        {
-          value: 'rotation',
-          label: 'rotation'
-        },
-        {
-          value: 'brightness',
-          label: 'brightness'
-        },
-        {
-          value: 'blur',
-          label: 'blur'
-        }
-      ],
-      strategyOptions: [
-        {
-          value: 'Averaging',
-          label: 'Averaging'
-        },
-        {
-          value: 'Gaussian',
-          label: 'Gaussian'
-        },
-        {
-          value: 'Median',
-          label: 'Median'
-        },
-        {
-          value: 'Bilateral Filter',
-          label: 'Bilateral Filter'
+          value: 'SegTest',
+          label: 'SegTest'
         }
       ]
     }
@@ -291,7 +96,10 @@ export default {
   },
   methods: {
     jumpList () {
-      this.$router.push({path: '/dataset'})
+      this.$router.push({path: '/augList'})
+    },
+    backTask () {
+      this.$router.push({path: '/segtest'})
     },
     getDataList () {
       getDatasetDetail().then(
@@ -311,7 +119,7 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          deepTask(this.ruleForm)
+          segTask(this.ruleForm)
         } else {
           return false
         }
