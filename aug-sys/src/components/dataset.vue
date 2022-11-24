@@ -25,7 +25,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.row.id)">Delete</el-button>
+              @click="handleDelete(scope.row.id, scope.row.name)">Delete</el-button>
               <el-button
               size="mini"
               type="primary"
@@ -58,6 +58,7 @@ export default {
       dataList: [],
       delVisible: false,
       id: 0,
+      datasetName: '',
       isLoading: false
     }
   },
@@ -88,9 +89,10 @@ export default {
     closeDel () {
       this.delVisible = false
     },
-    handleDelete (id) {
+    handleDelete (id, name) {
       this.delVisible = true
       this.id = id
+      this.datasetName = name
     },
     showMessage (parms) {
       this.$message({
@@ -108,7 +110,7 @@ export default {
     },
     confirmDelete () {
       this.isLoading = true
-      deleteDataset({ 'id': this.id }).then(
+      deleteDataset({ 'id': this.id, 'name': this.datasetName }).then(
         JSON => {
           if (JSON.data.data) {
             this.isLoading = false

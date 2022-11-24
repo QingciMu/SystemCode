@@ -163,7 +163,12 @@ def deleteDataset(request):
         if request.method == 'POST':
             data = json.loads(request.body.decode('utf-8'))
             id = data['id']
+            name = data['name']
             models.dataset.objects.filter(id = id).delete()
+            dirPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',name)
+            shutil.rmtree(dirPath)
+            zipPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',name+'.zip')
+            os.remove(zipPath)
             cursor = connection.cursor()
             cursor.execute('alter table dataset drop id')
             cursor.execute('alter table dataset add id int not null primary key auto_increment first')
