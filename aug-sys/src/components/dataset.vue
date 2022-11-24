@@ -25,7 +25,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+              @click="handleDelete(scope.row.id)">Delete</el-button>
               <el-button
               size="mini"
               type="primary"
@@ -57,7 +57,7 @@ export default {
       search: '',
       dataList: [],
       delVisible: false,
-      index: 0,
+      id: 0,
       isLoading: false
     }
   },
@@ -69,6 +69,7 @@ export default {
       getDatasetDetail().then(
         JSON => {
           const detail = JSON.data
+          this.tableData = []
           detail.data.forEach(i => {
             this.tableData.push({
               id: i.pk,
@@ -87,9 +88,9 @@ export default {
     closeDel () {
       this.delVisible = false
     },
-    handleDelete (index, row) {
+    handleDelete (id) {
       this.delVisible = true
-      this.index = index + 1
+      this.id = id
     },
     showMessage (parms) {
       this.$message({
@@ -107,7 +108,7 @@ export default {
     },
     confirmDelete () {
       this.isLoading = true
-      deleteDataset({ 'id': this.index }).then(
+      deleteDataset({ 'id': this.id }).then(
         JSON => {
           if (JSON.data.data) {
             this.isLoading = false
