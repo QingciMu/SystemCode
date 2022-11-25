@@ -5,7 +5,7 @@
         <el-input v-model="search" placeholder="Please enter a keyword to search"
           style="width:300px;margin-right:15px" size="small"></el-input>
           <el-button type="primary" size="small" @click="Search(search)">Search</el-button>
-          <el-button size="small">Reset</el-button>
+          <el-button size="small" @click="Reset()">Reset</el-button>
       </el-form-item>
     </el-form>
     <div style="display:flex;justify-content:center;width: 100%;">
@@ -76,6 +76,10 @@ export default {
     },
     Search (search) {
       this.pageData = this.fullData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))
+    },
+    Reset () {
+      this.search = ''
+      this.pageData = this.fullData
     }
   }
 }
