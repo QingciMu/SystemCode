@@ -2,7 +2,7 @@
   <div>
     <div class="title">Augmentation Task List</div>
     <div>
-      <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
           border style="width: 100%">
         <el-table-column fixed prop="taskName" label="Task Name" width="220">
         </el-table-column>
@@ -24,10 +24,7 @@
         </el-table-column>
         <el-table-column prop="createTime" label="Create Time" width="195">
         </el-table-column>
-        <el-table-column fixed="right">
-          <template slot="header" slot-scope="scope">
-            <el-input v-model="search" size="mini" placeholder="Enter a keyword to search" />
-          </template>
+        <el-table-column fixed="right" label="Operations">
           <template slot-scope="scope">
             <template v-if="scope.row.Status === 'Success'">
               <el-button
@@ -57,6 +54,17 @@
           </template>
       </el-dialog>
     </div>
+    <div class="split-page">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[10, 20, 50]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
@@ -65,6 +73,8 @@ export default {
   name: 'augList',
   data () {
     return {
+      currentPage: 1,
+      pagesize: 10,
       tableData: [],
       search: '',
       delVisible: false,
@@ -84,6 +94,12 @@ export default {
           this.tableData = detail.data
         }
       )
+    },
+    handleSizeChange (size) {
+      this.pagesize = size
+    },
+    handleCurrentChange (currentPage) {
+      this.currentPage = currentPage
     },
     handleDetail (taskName, type) {
       this.$router.push({path: '/augTaskDetail', query: {taskName: taskName, type: type}})
@@ -137,5 +153,9 @@ export default {
   font-weight: bold;
   text-align: left;
   margin-bottom: 20px;
+}
+.split-page {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
