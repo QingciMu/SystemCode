@@ -119,7 +119,7 @@ export default {
       })
     },
     handleDownload (row) {
-      const fileUrl = `http://127.0.0.1:8081/AugResult/${row.name}.zip`
+      const fileUrl = `http://127.0.0.1:8081/AugResult/${row.taskName}.zip`
       const link = document.createElement('a')
       link.href = fileUrl
       link.style.display = 'none'
