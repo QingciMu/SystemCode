@@ -1,23 +1,25 @@
 <template>
   <div>
-    <el-form label-width="200px">
-      <el-form-item label="Search:">
-        <el-input v-model="search" placeholder="Please enter a keyword to search"
-          style="width:300px;margin-right:15px" size="small"></el-input>
-          <el-button type="primary" size="small" @click="Search(search)">Search</el-button>
-          <el-button size="small" @click="Reset()">Reset</el-button>
-      </el-form-item>
-    </el-form>
+    <div style="display:flex;justify-content:center">
+      <el-form label-width="100px">
+        <el-form-item label="Search:">
+          <el-input v-model="search" placeholder="Please enter a keyword to search"
+            style="width:300px;margin-right:15px" size="small"></el-input>
+            <el-button type="primary" size="small" @click="Search(search)">Search</el-button>
+            <el-button size="small" @click="Reset()">Reset</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <div style="display:flex;justify-content:center;width: 100%;">
       <el-table :data="pageData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
         style="width:70%;max-width: 70%;">
         <el-table-column prop="name" label="Instance Name" :sortable="true" width="200">
         </el-table-column>
-        <el-table-column prop="type" label="Instance Type" width="150">
+        <el-table-column prop="type" label="Instance Type" width="200">
         </el-table-column>
-        <el-table-column prop="size" label="Size" width="160">
+        <el-table-column prop="size" label="Size" width="250">
         </el-table-column>
-        <el-table-column fixed="right" label="Operations" width="200">
+        <el-table-column fixed="right" label="Operations">
           <template slot-scope="scope">
             <el-button size="mini" @click="handelDetail(scope.row)">Detail</el-button>
           </template>
