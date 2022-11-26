@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tabs v-model="activeName" type="border-card" style="min-height:700px;text-align: center; margin-top: 10%;">
+    <el-tabs v-model="activeName" type="border-card" style="min-height: 650px;text-align: center; margin-top: 2%;">
       <el-tab-pane label="Upload Car Instance" name="Car">
         <el-upload
           class="upload-demo"
@@ -12,9 +12,9 @@
           :file-list="carList"
           :on-success="updateCar">
           <i class="el-icon-upload"></i>
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">1.上传单个实例，只能上传jpg/png文件</div>
-          <div class="el-upload__tip" slot="tip">2.上传多个实例，请上传Zip压缩文件</div>
+          <div class="el-upload__text">Drag file to here, or <em>click here</em></div>
+          <div class="el-upload__tip" slot="tip">1.Upload only one instance, please upload png</div>
+          <div class="el-upload__tip" slot="tip">2.Upload many instances,please upload zip file</div>
         </el-upload>
       </el-tab-pane>
       <el-tab-pane label="Upload Person Instance" name="Person">
@@ -28,9 +28,9 @@
           :file-list="personList"
           :on-success="updatePerson">
           <i class="el-icon-upload"></i>
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">1.上传单个实例，只能上传jpg/png文件</div>
-          <div class="el-upload__tip" slot="tip">2.上传多个实例，请上传Zip压缩文件</div>
+          <div class="el-upload__text">Drag file to here, or <em>click here</em></div>
+          <div class="el-upload__tip" slot="tip">1.Upload only one instance, please upload png</div>
+          <div class="el-upload__tip" slot="tip">2.Upload many instances,please upload zip file</div>
         </el-upload>
       </el-tab-pane>
     </el-tabs>
