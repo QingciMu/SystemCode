@@ -9,6 +9,7 @@ import augList from '@/components/augList'
 import instanceList from '@/components/instanceList'
 import augTaskDetail from '@/components/augTaskDetail'
 import success from '@/components/success'
+import uploadInstance from '@/components/uploadInstance'
 
 Vue.use(Router)
 
@@ -49,6 +50,11 @@ export default new Router({
       path: '/instanceList',
       name: 'instanceList',
       component: instanceList
+    },
+    {
+      path: '/uploadInstance',
+      name: 'uploadInstance',
+      component: uploadInstance
     },
     {
       path: '/augTaskDetail',

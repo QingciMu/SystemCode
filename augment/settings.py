@@ -185,7 +185,7 @@ SIMPLEUI_CONFIG = {
         {
             'name': 'Upload Instance',
             'icon': 'fas fa-upload',
-            'url': 'http://127.0.0.1:8080/instanceUpload'
+            'url': 'http://127.0.0.1:8080/uploadInstance'
         }]
     },
         {
@@ -207,5 +207,18 @@ SIMPLEUI_CONFIG = {
             'icon': 'fa fa-tools',
             'url':'http://127.0.0.1:8080/deeptest'
         }]
-    }]
+    },
+        {
+            'name': 'Predict',
+            'icon': 'fas fa-tasks',
+            'models': [{
+                'name': 'Task List',
+                'icon': 'fas fa-list',
+                'url': 'http://127.0.0.1:8080/preList'
+            },{
+                'name': 'Create Predict Task',
+                'icon': 'fas fa-desktop',
+                'url': 'http://127.0.0.1:8080/preTask'
+            }]
+        }]
 }
