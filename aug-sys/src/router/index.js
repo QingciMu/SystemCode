@@ -10,6 +10,7 @@ import instanceList from '@/components/instanceList'
 import augTaskDetail from '@/components/augTaskDetail'
 import success from '@/components/success'
 import uploadInstance from '@/components/uploadInstance'
+import uploadSuccess from '@/components/uploadSuccess'
 
 Vue.use(Router)
 
@@ -65,6 +66,11 @@ export default new Router({
       path: '/success',
       name: 'success',
       component: success
+    },
+    {
+      path: '/uploadSuccess',
+      name: 'uploadSuccess',
+      component: uploadSuccess
     }
   ]
 })
