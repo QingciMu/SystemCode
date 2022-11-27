@@ -226,6 +226,7 @@ def uploadCar(request):
             response['code'] = 200
             response['data'] = fileName
             response['msg'] = 'success'
+            models.Instance(name=fileName,type='Car').save()
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)
@@ -241,6 +242,7 @@ def uploadPerson(request):
             response['code'] = 200
             response['data'] = fileName
             response['msg'] = 'success'
+            models.Instance(name=fileName,type='Person').save()
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)
