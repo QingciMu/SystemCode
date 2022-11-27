@@ -66,3 +66,10 @@ class Strategy(models.Model):
     class Meta:
         db_table = 'strategy'
 
+class Instance(models.Model):
+    name = models.CharField(primary_key=True,max_length=255,null=False)
+    type = models.CharField(max_length=255, null=False)
+    uploadTime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'instance'
