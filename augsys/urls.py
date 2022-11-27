@@ -14,5 +14,7 @@ urlpatterns = [
     re_path(r'getTask',views.getTask),
     re_path(r'getAugDetail',views.getAugDetail),
     re_path(r'deleteAugTask',views.deleteAugTask),
-    re_path(r'getInstance',views.getInstance)
+    re_path(r'getInstance',views.getInstance),
+    re_path(r'uploadCar',views.uploadCar),
+    re_path(r'uploadPerson',views.uploadPerson),
 ]

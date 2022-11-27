@@ -215,6 +215,34 @@ def getInstance(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def uploadCar(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            file_obj = request.FILES.get('file',None)
+            head_path = '/Users/zhangshijie/Desktop/SegTest-Data/dataset'
+            zip_file = zipfile.ZipFile(file_obj)
+            if not os.path.exists(head_path):
+                os.mkdir((head_path))
+            zip_file.extractall(path=head_path)
+
+            file_path = os.path.join(head_path,file_obj.name)
+            with open(file_path,'wb') as f:
+                for chunk in file_obj.chunks():
+                    f.write(chunk)
+            fileName = str(file_obj.name).split('.')[0]
+            num = len(glob.glob(os.path.join(head_path,fileName,'image')))
+            response['code'] = 200
+            response['data'] = fileName
+            response['msg'] = 'success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+def uploadPerson(request):
+    return 0
+
 def deepTask(request):
     data = json.loads(request.body.decode('utf-8'))
     response = {}
