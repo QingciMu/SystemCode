@@ -20,7 +20,7 @@ from augsys.deeptestMethods import *
 from augsys.getFileSize import *
 from augsys.uploadInstance import *
 import shutil
-
+from augsys.generalMethod import *
 
 
 
@@ -247,6 +247,23 @@ def uploadPerson(request):
         response['data'] = False
         response['msg'] = str(e)
     return JsonResponse(response)
+
+def downloadInstance(request):
+    response = {}
+    try:
+        raw_file = '/Users/zhangshijie/Desktop/SegTest-Data/InstancePool'
+        zip_path = '/Users/zhangshijie/Desktop/SegTest-Data/InstancePool.zip'
+        if(os.path.exists(zip_path)):
+            os.remove(zip_path)
+        zipDir(raw_file,zip_path)
+        response['code'] = 200
+        response['data'] =True
+        response['msg'] ='success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
 
 def deepTask(request):
     data = json.loads(request.body.decode('utf-8'))

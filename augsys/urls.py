@@ -17,4 +17,5 @@ urlpatterns = [
     re_path(r'getInstance',views.getInstance),
     re_path(r'uploadCar',views.uploadCar),
     re_path(r'uploadPerson',views.uploadPerson),
+    re_path(r'downloadInstance',views.downloadInstance)
 ]

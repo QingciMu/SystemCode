@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="title">Instance List</div>
+    <div style="display:flex; margin-bottom: 20px;">
+      <div class="title">Instance List</div>
+      <el-button type="primary" size="mini" @click="handleDownload()">Download</el-button>
+    </div>
     <el-tabs v-model="activeName" type="border-card" style="min-height:700px">
       <el-tab-pane label="All Instance" name="first">
         <InstanceTable
@@ -21,7 +24,7 @@
   </div>
 </template>
 <script>
-import { getInstance } from '../api/api.js'
+import { getInstance, downloadInstance } from '../api/api.js'
 import InstanceTable from './instanceTable.vue'
 export default {
   name: 'instanceList',
@@ -61,13 +64,22 @@ export default {
         }
       )
     },
-    handleDownload (row) {
-      const fileUrl = `http://127.0.0.1:8081/Dataset/${row.name}.zip`
-      const link = document.createElement('a')
-      link.href = fileUrl
-      link.style.display = 'none'
-      link.download = `${row.name}.zip`
-      link.click()
+    handleDownload () {
+      downloadInstance().then(
+        JSON => {
+          const success = JSON.data.data
+          if (success) {
+            const fileUrl = `http://127.0.0.1:8081/InstancePool.zip`
+            const link = document.createElement('a')
+            link.href = fileUrl
+            link.style.display = 'none'
+            link.download = `InstancePool.zip`
+            link.click()
+          } else {
+            this.showMessage({ message: JSON.data.msg, type: 'error' })
+          }
+        }
+      )
     }
   }
 }
@@ -79,7 +91,7 @@ export default {
   font-size: 25px;
   font-weight: bold;
   text-align: left;
-  margin-bottom: 20px;
+  margin-right: 30px;
 }
 .upload-demo {
   margin-bottom: 20px;
