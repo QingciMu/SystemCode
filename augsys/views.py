@@ -216,6 +216,31 @@ def getInstance(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def getInstanceList(request):
+    response = {}
+    try:
+        instanceDetail = eval(serializers.serialize("json", models.Instance.objects.all()))
+        response['code'] = 200
+        result={}
+        car=[]
+        person=[]
+        for i in range(len(instanceDetail)):
+            temp = {}
+            temp['value'] = instanceDetail[i]['pk']
+            temp['label'] = instanceDetail[i]['pk']
+            type = instanceDetail[i]['fields']['type']
+            if(type == 'Car'):
+                car.append(temp)
+            else:
+                person.append(temp)
+        result['car'] = car
+        result['person'] = person
+        response['data'] = result
+        response['msg'] = 'success'
+    except Exception as e:
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
 def uploadCar(request):
     response = {}
     try:

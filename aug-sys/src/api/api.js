@@ -14,8 +14,9 @@ const segTaskUrl = ip + 'segTask'
 const taskUrl = ip + 'getTask'
 const deleteAugTaskUrl = ip + 'deleteAugTask'
 const getAugDetailUrl = ip + 'getAugDetail'
-const instanceListUrl = ip + 'getInstance'
+const instanceUrl = ip + 'getInstance'
 const downloadInstanceUrl = ip + 'downloadInstance'
+const instanceListUrl = ip + 'getInstanceList'
 export const getDatasetDetail = () => {
   return axios.get(datasetUrl)
 }
@@ -53,6 +54,9 @@ export const getAugDetail = (parms) => {
   return axios.post(getAugDetailUrl, parms)
 }
 export const getInstance = () => {
+  return axios.get(instanceUrl)
+}
+export const getInstanceList = () => {
   return axios.get(instanceListUrl)
 }
 export const downloadInstance = () => {

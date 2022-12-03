@@ -22,6 +22,10 @@
             <el-option v-for="item in foldOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="Choose Instances" prop="instances" required>
+          <el-cascader v-model="ruleForm.instances" :props="{multiple: true}" :options="instanceOptions" :show-all-levels="true" placeholder="Please Choose Instances" class="select-form">
+          </el-cascader>
+        </el-form-item>
         <el-form-item label="Choose augment methods" prop="methods" required>
           <el-select v-model="ruleForm.methods" multiple placeholder="Please Choose Methods" class="select-form">
             <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -36,7 +40,7 @@
   </div>
 </template>
 <script>
-import { getDatasetDetail, segTask, showMessage } from '../api/api.js'
+import { getDatasetDetail, segTask, showMessage, getInstanceList } from '../api/api.js'
 export default {
   name: 'segtest',
   data () {
@@ -47,6 +51,7 @@ export default {
         taskName: '',
         taskDesc: '',
         fold: null,
+        instances: [],
         methods: []
       },
       DataOptions: [],
@@ -72,6 +77,23 @@ export default {
           label: 5
         }
       ],
+      instanceOptions: [
+        {
+          value: 'Car',
+          label: 'Car',
+          children: [
+            {
+              value: '1',
+              label: '1'
+            }
+          ]
+        },
+        {
+          value: 'Person',
+          label: 'Person',
+          children: []
+        }
+      ],
       methodOptions: [
         {
           value: 'Random',
@@ -94,6 +116,7 @@ export default {
   },
   mounted () {
     this.getDataList(this.ruleForm)
+    this.getInstanceDetail()
   },
   methods: {
     jumpSuccess () {
@@ -103,6 +126,7 @@ export default {
       getDatasetDetail().then(
         JSON => {
           const detail = JSON.data
+          this.DataOptions = []
           detail.data.forEach(i => {
             this.DataOptions.push(
               {
@@ -111,6 +135,17 @@ export default {
               }
             )
           })
+        }
+      )
+    },
+    getInstanceDetail () {
+      this.instanceOptions.forEach(i => {
+        i.children = []
+      })
+      getInstanceList().then(
+        JSON => {
+          this.instanceOptions[0].children = JSON.data.data.car
+          this.instanceOptions[1].children = JSON.data.data.person
         }
       )
     },
