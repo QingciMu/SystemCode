@@ -295,9 +295,20 @@ def deepTask(request):
     response = {}
     try:
         deeptestAug(data)
-
         response['data'] = True
         response['msg'] = 'success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+def segTask(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            response['data'] = True
+            response['msg'] = 'success'
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)

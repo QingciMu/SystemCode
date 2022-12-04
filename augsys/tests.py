@@ -29,8 +29,6 @@ import glob
 import codecs
 import math
 import json
-# labelPath = 'label/'
-# objPath = ''
 import time
 
 starttime = time.time() # 开始记录
@@ -64,13 +62,6 @@ def augmentlist():
         augmentList.append([selectedpoint,selectedobj,b])
         print(len(augmentList))
     return augmentList
-def findContours(fileName):
-    img = cv2.imread(fileName)
-    Contours = []
-    contours = cv2.findContours(img)
-    for a in contours:
-        Contours.append(a)
-    return Contours
 
 def objectInsertion(labelName,imageName,obj,insertpoint,times):
     count = len(os.listdir('data/hrnet_r10_'+str(times)+'_image/'))

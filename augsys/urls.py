@@ -11,6 +11,7 @@ urlpatterns = [
     re_path(r'deleteModel',views.deleteModel),
     re_path(r'uploadHrModel',views.uploadHrModel),
     re_path(r'deepTask',views.deepTask),
+    re_path(r'segTask',views.segTask),
     re_path(r'getTask',views.getTask),
     re_path(r'getAugDetail',views.getAugDetail),
     re_path(r'deleteAugTask',views.deleteAugTask),
