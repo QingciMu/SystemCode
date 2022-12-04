@@ -288,7 +288,7 @@ export default {
     }
   },
   mounted () {
-    this.getDataList(this.ruleForm)
+    this.getDataList()
   },
   methods: {
     jumpSuccess () {

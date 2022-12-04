@@ -81,12 +81,7 @@ export default {
         {
           value: 'Car',
           label: 'Car',
-          children: [
-            {
-              value: '1',
-              label: '1'
-            }
-          ]
+          children: []
         },
         {
           value: 'Person',
@@ -115,7 +110,7 @@ export default {
     }
   },
   mounted () {
-    this.getDataList(this.ruleForm)
+    this.getDataList()
     this.getInstanceDetail()
   },
   methods: {
