@@ -103,7 +103,6 @@ def objectInsertion(labelName,imageName,obj,insertpoint,times):
 
 
 
-
 def ruleGenerate(augmentList,times):
     for augmentation in augmentList:
         image = 'backgrounds/'+augmentation[2]

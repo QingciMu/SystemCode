@@ -306,7 +306,14 @@ def segTask(request):
     response = {}
     try:
         if request.method == 'POST':
+            #预处理表达传过来的数据
             data = json.loads(request.body.decode('utf-8'))
+            dataset = data['dataset']
+            taskName = data['taskName']
+            taskDesc = data['taskDesc']
+            fold = data['fold']
+            instanceList = data['instances'] # list
+            methods = data['methods'] # list
             response['data'] = True
             response['msg'] = 'success'
     except Exception as e:

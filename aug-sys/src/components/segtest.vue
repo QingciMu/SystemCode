@@ -95,11 +95,11 @@ export default {
           label: 'Random'
         },
         {
-          value: 'Random Instance',
+          value: 'RandomInstance',
           label: 'Random Instance'
         },
         {
-          value: 'Random Insertion',
+          value: 'RandomInsertion',
           label: 'Random Insertion'
         },
         {
