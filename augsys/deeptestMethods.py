@@ -170,8 +170,8 @@ def deeptestAug(data):
         models.Methods(taskName=taskName,method='shear').save()
     if ('rotation' in methods):
         d4 = True
-        degreeMin = int(data['bias']['min'])
-        degreeMax = int(data['bias']['max'])
+        degreeMin = int(data['degree']['min'])
+        degreeMax = int(data['degree']['max'])
         models.Methods(taskName=taskName,method='rotation').save()
         models.DeeptestParams.objects.filter(taskName=taskName).update(degreeMin=degreeMin,degreeMax=degreeMax)
     if ('contrast' in methods):
