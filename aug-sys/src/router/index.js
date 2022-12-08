@@ -11,6 +11,7 @@ import augTaskDetail from '@/components/augTaskDetail'
 import success from '@/components/success'
 import uploadInstance from '@/components/uploadInstance'
 import uploadSuccess from '@/components/uploadSuccess'
+import preList from '@/components/preList'
 
 Vue.use(Router)
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/uploadSuccess',
       name: 'uploadSuccess',
       component: uploadSuccess
+    },
+    {
+      path: '/preList',
+      name: 'preList',
+      component: preList
     }
   ]
 })
