@@ -73,3 +73,15 @@ class Instance(models.Model):
 
     class Meta:
         db_table = 'instance'
+
+class PredictTask(models.Model):
+    taskName = models.CharField(primary_key=True,max_length=255,null=False)
+    taskDesc = models.CharField(max_length=500,null=True)
+    dataset = models.CharField(max_length=255,null=False)
+    num = models.IntegerField(null=False)
+    model = models.CharField(max_length=255,null=False)
+    status = models.CharField(max_length=255,null=False)
+    createTime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'predictTask'
