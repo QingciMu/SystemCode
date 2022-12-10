@@ -216,9 +216,9 @@ SIMPLEUI_CONFIG = {
                 'icon': 'fas fa-list',
                 'url': 'http://127.0.0.1:8080/preList'
             },{
-                'name': 'Create Predict Task',
+                'name': 'Create Test Task',
                 'icon': 'fas fa-desktop',
-                'url': 'http://127.0.0.1:8080/preTask'
+                'url': 'http://127.0.0.1:8080/testTask'
             }]
         }]
 }
