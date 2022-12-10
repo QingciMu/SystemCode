@@ -68,7 +68,7 @@
   </div>
 </template>
 <script>
-import { getTask, deleteAugTask } from '../api/api.js'
+import { getTestTask, deleteTestTask } from '../api/api.js'
 export default {
   name: 'augList',
   data () {
@@ -79,17 +79,17 @@ export default {
       search: '',
       delVisible: false,
       isLoading: false,
-      deleteName: '',
-      deleteType: ''
+      deleteName: ''
     }
   },
   mounted () {
-    this.getTaskInfo()
+    this.getTestTaskInfo()
   },
   methods: {
-    getTaskInfo () {
-      getTask().then(
+    getTestTaskInfo () {
+      getTestTask().then(
         JSON => {
+          this.tableData = []
           const detail = JSON.data
           this.tableData = detail.data
         }
@@ -118,7 +118,7 @@ export default {
       })
     },
     handleDownload (row) {
-      const fileUrl = `http://127.0.0.1:8081/AugResult/${row.taskName}.zip`
+      const fileUrl = `http://127.0.0.1:8081/TestResult/${row.taskName}.zip`
       const link = document.createElement('a')
       link.href = fileUrl
       link.style.display = 'none'
@@ -127,7 +127,7 @@ export default {
     },
     confirmDelete () {
       this.isLoading = true
-      deleteAugTask({ 'taskName': this.deleteName, 'type': this.deleteType }).then(
+      deleteTestTask({ 'taskName': this.deleteName }).then(
         JSON => {
           if (JSON.data.data) {
             this.isLoading = false
