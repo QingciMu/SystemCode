@@ -20,9 +20,8 @@
               </el-select>
             </el-form-item>
             <el-form-item label="Choose Test Case" prop="dataset" required>
-              <el-select v-model="taskData.dataset" multiple placeholder="Please Choose Test Case" class="select-form">
-                <el-option v-for="item in dataOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <el-cascader v-model="taskData.testCase" :props="{multiple: true}" :options="testCaseOptions" :show-all-levels="true" placeholder="Please Choose Test Case" class="select-form">
+              </el-cascader>
             </el-form-item>
         </template>
       </el-form>
@@ -44,10 +43,21 @@ export default {
       active: 0,
       taskData: {
         model: '',
-        dataset: []
+        testCase: []
       },
       modelOptions: [],
-      dataOptions: []
+      testCaseOptions: [
+        {
+          value: 'DataSet',
+          label: 'DataSet',
+          children: []
+        },
+        {
+          value: 'AugResult',
+          label: 'AugResult',
+          children: []
+        }
+      ]
     }
   },
   mounted () {
@@ -59,7 +69,7 @@ export default {
         JSON => {
           const detail = JSON.data
           detail.data.forEach(i => {
-            this.dataOptions.push(
+            this.testCaseOptions[0].children.push(
               {
                 value: i.fields.name,
                 label: i.fields.name
@@ -73,8 +83,6 @@ export default {
 }
 </script>
 <style scoped>
-.task-body {
-}
 .title {
   font-family: sans-serif;
   font-size: 25px;
