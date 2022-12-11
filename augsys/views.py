@@ -413,5 +413,28 @@ def deleteAugTask(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
-
+def getTestCase(request):
+    response = {}
+    try:
+        dataset = eval(serializers.serialize("json", models.dataset.objects.all()))
+        augResult = eval(serializers.serialize("json", models.AugTask.objects.filter(status = 'Success')))
+        dataLst = []
+        augLst = []
+        for i in range(len(dataset)):
+            temp = {}
+            temp['value']=temp['label'] = dataset[i]['fields']['name']
+            dataLst.append(temp)
+        for i in range(len(augResult)):
+            temp = {}
+            temp['value']=temp['label'] = augResult[i]['pk']
+            augLst.append(temp)
+        data = {}
+        data['dataSet'] = dataLst
+        data['augResult'] = augLst
+        response['code'] = 200
+        response['data'] = data
+        response['msg'] = 'Success'
+    except Exception as e:
+        response['msg'] = str(e)
+    return JsonResponse(response)
 

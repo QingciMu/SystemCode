@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getDatasetDetail } from '../api/api'
+import { getTestCase } from '../api/api'
 export default {
   data () {
     return {
@@ -61,21 +61,15 @@ export default {
     }
   },
   mounted () {
-    this.getDataList()
+    this.getAllTest()
   },
   methods: {
-    getDataList () {
-      getDatasetDetail().then(
+    getAllTest () {
+      getTestCase().then(
         JSON => {
-          const detail = JSON.data
-          detail.data.forEach(i => {
-            this.testCaseOptions[0].children.push(
-              {
-                value: i.fields.name,
-                label: i.fields.name
-              }
-            )
-          })
+          const detail = JSON.data.data
+          this.testCaseOptions[0].children = detail.dataSet
+          this.testCaseOptions[1].children = detail.augResult
         }
       )
     }
