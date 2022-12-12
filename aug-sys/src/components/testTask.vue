@@ -66,7 +66,7 @@
           <el-form-item>
             <el-button v-show="active !== 0" @click="previous()">Previous</el-button>
             <el-button v-show="active !== 2" @click="nextStep()">Next</el-button>
-            <el-button v-show="active === 2" type="primary" @click="submit('taskData')">Submit</el-button>
+            <el-button v-show="active === 2" type="primary" @click="submit('metrics')">Submit</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { getTestCase, getModel } from '../api/api'
+import { getTestCase, getModel, startTest } from '../api/api'
 export default {
   data () {
     return {
@@ -108,7 +108,8 @@ export default {
           children: []
         }
       ],
-      formName: ['basic', 'datas', 'metrics']
+      formName: ['basic', 'datas', 'metrics'],
+      formData: {}
     }
   },
   mounted () {
@@ -164,7 +165,16 @@ export default {
       this.validateForm(this.formName[this.active])
     },
     submit (formName) {
-      this.$refs[formName].validate()
+      this.$refs[formName].validate(validate => {
+        if (validate) {
+          const formData = Object.assign(this.basic, this.datas, this.metrics)
+          startTest(formData).then(
+            JSON => {
+              return true
+            }
+          )
+        }
+      })
     }
   }
 }
