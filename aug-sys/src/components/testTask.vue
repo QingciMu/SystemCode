@@ -11,39 +11,89 @@
       </el-steps>
     </div>
     <div class="test-task">
-      <el-form :model="taskData" ref="taskData" label-width="40%">
+      <div class="step-title">{{title}}</div>
+      <div class="form-content">
         <template v-if="active === 0">
-            <div class="step-title">Choose the Model and DataSet</div>
+          <el-form :model="basic" ref="basic" label-width="45%">
+            <el-form-item label="Task Name" prop="taskName" required>
+              <el-input v-model="basic.taskName" clearable placeholder="Please input task name" class="select-form">
+              </el-input>
+            </el-form-item>
+            <el-form-item label="Task Description" prop="taskDesc">
+              <el-input v-model="basic.taskDesc" type="textarea" clearable placeholder="Please input task descriptionx" class="select-form">
+              </el-input>
+            </el-form-item>
+          </el-form>
+        </template>
+        <template v-if="active === 1">
+          <el-form :model="datas" ref="datas" label-width="45%">
             <el-form-item label="Choose Model" prop="model" required>
-              <el-select v-model="taskData.model" placeholder="Please Choose Model" class="select-form">
+              <el-select v-model="datas.model" placeholder="Please Choose Model" class="select-form">
                 <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Choose Test Case" prop="dataset" required>
-              <el-cascader v-model="taskData.testCase" :props="{multiple: true}" :options="testCaseOptions" :show-all-levels="true" placeholder="Please Choose Test Case" class="select-form">
+            <el-form-item label="Choose Test Case" prop="testCase" required>
+              <el-cascader v-model="datas.testCase" :props="{multiple: true}" :options="testCaseOptions" :show-all-levels="true" placeholder="Please Choose Test Case" class="select-form">
               </el-cascader>
             </el-form-item>
+          </el-form>
         </template>
-      </el-form>
-      <template v-if="active === 1">
-
-      </template>
-      <template v-if="active === 2">
-
-      </template>
+        <template v-if="active === 2">
+          <el-form :model="metrics" ref="metrics" label-width="45%">
+            <el-form-item label="IOU:" prop="UseIOU" required>
+              <el-radio-group v-model="metrics.UseIOU">
+                <el-radio :label=1>Yes</el-radio>
+                <el-radio :label=0>No</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="OSE:" prop="UseOSE" required>
+              <el-radio-group v-model="metrics.UseOSE">
+                <el-radio :label=1>Yes</el-radio>
+                <el-radio :label=0>No</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="USE:" prop="UseUSE" required>
+              <el-radio-group v-model="metrics.UseUSE">
+                <el-radio :label=1>Yes</el-radio>
+                <el-radio :label=0>No</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+        </template>
+      </div>
+      <div class="form-button">
+        <el-form style="text-align:right">
+          <el-form-item>
+            <el-button v-show="active !== 0" @click="previous()">Previous</el-button>
+            <el-button v-show="active !== 2" @click="nextStep()">Next</el-button>
+            <el-button v-show="active === 2" type="primary" @click="submit('taskData')">Submit</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getTestCase } from '../api/api'
+import { getTestCase, getModel } from '../api/api'
 export default {
   data () {
     return {
+      titleLst: ['Basic Task Information', 'Set the Model and DataSet', 'Set the Evaluation Metrics'],
+      title: 'Basic Task Information',
       active: 0,
-      taskData: {
+      basic: {
+        taskName: '',
+        taskDesc: ''
+      },
+      datas: {
         model: '',
         testCase: []
+      },
+      metrics: {
+        UseIOU: 1,
+        UseUSE: 1,
+        UseOSE: 1
       },
       modelOptions: [],
       testCaseOptions: [
@@ -57,13 +107,31 @@ export default {
           label: 'AugResult',
           children: []
         }
-      ]
+      ],
+      formName: ['basic', 'datas', 'metrics']
     }
   },
   mounted () {
     this.getAllTest()
+    this.getAllModel()
   },
   methods: {
+    getAllModel () {
+      getModel().then(
+        JSON => {
+          this.modelOptions = []
+          const lst = JSON.data.data
+          lst.forEach(i => {
+            this.modelOptions.push(
+              {
+                value: i.name,
+                label: i.name
+              }
+            )
+          })
+        }
+      )
+    },
     getAllTest () {
       getTestCase().then(
         JSON => {
@@ -72,6 +140,31 @@ export default {
           this.testCaseOptions[1].children = detail.augResult
         }
       )
+    },
+    validateForm (formName) {
+      this.$refs[formName].validate(validate => {
+        if (validate) {
+          this.next()
+        }
+      })
+    },
+    noValidateForm (formName) {
+      this.$refs[formName].clearValidate()
+    },
+    previous () {
+      this.noValidateForm(this.formName[this.active])
+      this.active -= 1
+      this.title = this.titleLst[this.active]
+    },
+    next () {
+      this.active += 1
+      this.title = this.titleLst[this.active]
+    },
+    nextStep () {
+      this.validateForm(this.formName[this.active])
+    },
+    submit (formName) {
+      this.$refs[formName].validate()
     }
   }
 }
@@ -103,11 +196,23 @@ export default {
   margin-left: 5%;
   margin-right: 5%;
   min-height:400px;
+  max-height: 80%;
   border: solid;
   border-radius: 10px;
   border-color: black;
 }
 .select-form {
     width: 300px;
+}
+.form-content {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.form-button {
+  margin-top: 20px;
+  margin-right: 10%;
+  text-align: right;
 }
 </style>
