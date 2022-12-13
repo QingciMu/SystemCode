@@ -85,3 +85,11 @@ class PredictTask(models.Model):
 
     class Meta:
         db_table = 'predictTask'
+
+class TestCase(models.Model):
+    id=models.AutoField(primary_key=True,null=False,unique=True)
+    taskName = models.CharField(max_length=255,null=False)
+    testCase = models.CharField(max_length=255,null=False)
+
+    class Meta:
+        db_table = 'testCase'
