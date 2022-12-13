@@ -447,7 +447,24 @@ def startTest(request):
             taskDesc = data['taskDesc']
             modelName = data['model']
             testCase = data['testCase']
+            testSet = []
+            dataset = ""
+            num= 0
+            for i in range(len(testCase)):
+                if(i != len(testCase)):
+                    testStr = testCase[i][0] + '/'+ testCase[i][1]
+                    if(i != len(testCase) -1):
+                        testStr += ' '
+                    dataset += testStr
+                setPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data',testCase[i][0],testCase[i][1])
+                testSet.append(setPath)
+                path = os.path.join(setPath,'image/*')
+                num += getFileNum(path)
+            type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields']['modelType']
+            # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running')
 
+            response['data'] = dataset
+            response['lst'] = testSet
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)
