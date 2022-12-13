@@ -453,6 +453,8 @@ def startTest(request):
             for i in range(len(testCase)):
                 if(i != len(testCase)):
                     testStr = testCase[i][0] + '/'+ testCase[i][1]
+                    # 保存测试用例集信息
+                    # models.TestCase(taskName=taskName,testCase=testStr).save()
                     if(i != len(testCase) -1):
                         testStr += ' '
                     dataset += testStr
@@ -461,9 +463,9 @@ def startTest(request):
                 path = os.path.join(setPath,'image/*')
                 num += getFileNum(path)
             type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields']['modelType']
-            # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running')
-
-            response['data'] = dataset
+            # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
+            #if(type == 'SegNet'):
+            response['data'] = type
             response['lst'] = testSet
     except Exception as e:
         response['data'] = False
