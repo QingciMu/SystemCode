@@ -444,6 +444,9 @@ def startTest(request):
         if request.method == 'POST':
             data = json.loads(request.body.decode('utf-8'))
             taskName = data['taskName']
+            taskDesc = data['taskDesc']
+            modelName = data['model']
+            testCase = data['testCase']
 
     except Exception as e:
         response['data'] = False
