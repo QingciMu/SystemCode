@@ -147,7 +147,7 @@ def uploadDataset(request):
                 for chunk in file_obj.chunks():
                     f.write(chunk)
             fileName = str(file_obj.name).split('.')[0]
-            num = len(glob.glob(os.path.join(head_path,fileName,'image')))
+            num = len(glob.glob(os.path.join(head_path,fileName,'image/*')))
             new_dataset = models.dataset(name=fileName,num=num)
             new_dataset.save()
             response['code'] = 200
