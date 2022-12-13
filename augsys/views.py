@@ -438,3 +438,15 @@ def getTestCase(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def startTest(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            taskName = data['taskName']
+
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
