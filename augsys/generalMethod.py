@@ -1,3 +1,4 @@
+import glob
 import os
 import zipfile
 
@@ -18,3 +19,7 @@ def zipDir(dirpath, outFullName):
             zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
 
     zip.close()
+
+#获取测试集中的测试用例数
+def getFileNum(path):
+    return len(glob.glob(path))
