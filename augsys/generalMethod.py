@@ -23,3 +23,7 @@ def zipDir(dirpath, outFullName):
 #获取测试集中的测试用例数
 def getFileNum(path):
     return len(glob.glob(path))
+
+def getImgName(imgPath,i):
+    img = (imgPath.split('/'))[i]
+    return (img.split('.'))[0]

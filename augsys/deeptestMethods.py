@@ -124,9 +124,6 @@ def blur(imgName,lblName,strategy,times,fileName,aug_img_path,aug_label_path):
     cv2.imwrite(newlblName,lbl)
     return 0
 
-def getImgName(imgPath,i):
-    img = (imgPath.split('/'))[i]
-    return (img.split('.'))[0]
 
 def deeptestAug(data):
     dataset = data['dataset']
