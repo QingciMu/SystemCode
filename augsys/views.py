@@ -21,6 +21,7 @@ from augsys.getFileSize import *
 from augsys.uploadInstance import *
 import shutil
 from augsys.generalMethod import *
+from augsys.predictSegNet import *
 
 
 
@@ -465,8 +466,9 @@ def startTest(request):
             type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields']['modelType']
             # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
             #if(type == 'SegNet'):
-            response['data'] = type
-            response['lst'] = testSet
+            loss,iou = startPredict(testSet[0],modelName)
+            response['data'] = loss
+            response['lst'] = iou
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)

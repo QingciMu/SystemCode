@@ -7,7 +7,6 @@ import matplotlib.image
 import torch
 import numpy as np
 import pandas as pd
-# import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
@@ -19,22 +18,32 @@ import torch.nn.functional as F
 from torch import optim
 from collections import namedtuple
 
-
 # Make numpy printouts easier to read.
 np.set_printoptions(precision=3, suppress=True)
 
 
-# loading training and validation datasets, test dataset doesn't have annotations so we will use split traning data into train and test data
-train_label_data_path = '/Users/zhangshijie/Desktop/r10/segnet_r10_2_image'
-train_img_path = '/Users/zhangshijie/Desktop/r10/segnet_r10_2_image'
+def getTestSet(setPath):
+    # loading training and validation datasets, test dataset doesn't have annotations so we will use split traning data into train and test data
+    test_label_data_path = setPath + '/label'
+    test_img_path = setPath + '/image'
 
-train_labels = sorted(glob.glob(train_label_data_path + "/*.png"))
-train_inp = sorted(glob.glob(train_img_path + "/*.png"))
-train_labels.sort(key=lambda x:int(x[len(train_label_data_path)+1:-4]))
-train_inp.sort(key=lambda x:int(x[len(train_label_data_path)+1:-4]))
+    test_labels = sorted(glob.glob(test_label_data_path + "/*.png"))
+    test_inp = sorted(glob.glob(test_img_path + "/*.png"))
+    test = []
+    for x in zip(test_inp, test_labels):
+        test.append(x)
 
+    n = len(test)
+    test_dataset = []
 
+    for i in range(n):
+        test_dataset.append(test[i])
 
+    test_loader = torch.utils.data.DataLoader(test_dataset,
+                                              batch_size=1,
+                                              shuffle=True,
+                                              num_workers=0)
+    return test_loader ,n
 
 ## from labels.py file
 # a label and all meta information
@@ -74,15 +83,15 @@ Label = namedtuple('Label', [
     'color',  # The color of this label
 ])
 
-# --------------------------------------------------------------------------------
-# A list of all labels
-# --------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------
+    # A list of all labels
+    # --------------------------------------------------------------------------------
 
-# Please adapt the train IDs as appropriate for your approach.
-# Note that you might want to ignore labels with ID 255 during training.
-# Further note that the current train IDs are only a suggestion. You can use whatever you like.
-# Make sure to provide your results using the original IDs and not the training IDs.
-# Note that many IDs are ignored in evaluation and thus you never need to predict these!
+    # Please adapt the train IDs as appropriate for your approach.
+    # Note that you might want to ignore labels with ID 255 during training.
+    # Further note that the current train IDs are only a suggestion. You can use whatever you like.
+    # Make sure to provide your results using the original IDs and not the training IDs.
+    # Note that many IDs are ignored in evaluation and thus you never need to predict these!
 
 labels = [
     #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
@@ -123,22 +132,25 @@ labels = [
     Label('license plate', -1, -1, 'vehicle', 7, False, True, (0, 0, 142)),
 ]
 
-# labels that will be used has ignoreinEval == False
-labels_used = []
-ids = []
-for i in range(len(labels)):
-    # if labels[i].name == 'unlabeled':
-    #   labels_used.append(labels[i])
-    if (labels[i].ignoreInEval == False):
-        labels_used.append(labels[i])
-        ids.append(labels[i].id)
-print("number of labels used = " + format(len(labels_used)))
+def get_labels_used():
+    # labels that will be used has ignoreinEval == False
+    labels_used = []
+    ids = []
+    for i in range(len(labels)):
+        # if labels[i].name == 'unlabeled':
+        #   labels_used.append(labels[i])
+        if (labels[i].ignoreInEval == False):
+            labels_used.append(labels[i])
+            ids.append(labels[i].id)
+    print("number of labels used = " + format(len(labels_used)))
+    return labels_used
 
-# create a dictionary with label_id as key & train_id as value
-label_dic = {}
-for i in range(len(labels) - 1):
-    label_dic[labels[i].id] = labels[i].trainId
-
+def get_label_dic():
+    # create a dictionary with label_id as key & train_id as value
+    label_dic = {}
+    for i in range(len(labels) - 1):
+        label_dic[labels[i].id] = labels[i].trainId
+    return label_dic
 
 # function to convert labelids to trainids
 def createtrainID(label_in, label_dic):
@@ -171,7 +183,7 @@ def visual_label(mask, labels_used, plot=False):
     return label_img
 
 # function to generate images for training, validation and testing
-def gen_images(x, s1=128, s2=256):
+def gen_images(x,s1=256,s2=512):
     _, _, s3 = cv2.imread(x[0]).shape
     img = np.zeros((len(x), s1, s2, s3))
     for i in range(len(x)):
@@ -182,8 +194,8 @@ def gen_images(x, s1=128, s2=256):
 
 
 # function to generate images for training, validation and testing
-def gen_mask_train(x, label_dic, s1=128, s2=256):
-    # s1,s2,_ = cv2.imread(x[0]).shape
+def gen_mask_train(x, label_dic,s1=256,s2=512):
+    #s1,s2,_ = cv2.imread(x[0]).shape
     mask = np.zeros((len(x), s1, s2))
     for i in range(len(x)):
         image = createtrainID(cv2.resize(cv2.imread(x[i]), (s2, s1), interpolation=cv2.INTER_NEAREST)[:, :, 0],
@@ -193,28 +205,7 @@ def gen_mask_train(x, label_dic, s1=128, s2=256):
     return torch.tensor(mask)
 
 
-train = []
-for x in zip(train_inp, train_labels):
-    train.append(x)
-
-
-n = len(train)
-test_dataset = []
-
-for i in range(n):
-    test_dataset.append(train[i])
-
-
-test_loader = torch.utils.data.DataLoader(test_dataset,
-                                          batch_size=1,
-                                          shuffle=False,
-                                          num_workers=0)
-
-
-print ("Test set size: {}".format(len(test_dataset)))
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(device)
 
 
 # we will update transforms for final report
@@ -469,7 +460,9 @@ def train(model, iterator, optimizer, criterion, device, label_dic):
     return epoch_loss / len(iterator), epoch_IoU / len(iterator)
 
 
-def evaluation(model, iterator, criterion, device):
+def evaluation(model, iterator, criterion, device,label_dic):
+    epoch_loss = 0
+    epoch_IoU = 0
 
     model.eval()
 
@@ -477,8 +470,20 @@ def evaluation(model, iterator, criterion, device):
         for (x, y) in tqdm(iterator):
             x = gen_images(x)
             x = x.to(device).type(torch.float)
+            y = gen_mask_train(y, label_dic)
+            y = y.to(device).long()
             y_pred = model(x)
-    return 0
+            loss = criterion(y_pred, y)
+
+            IoU = mean_iou(y_pred, y)
+
+            epoch_loss += loss.item()
+            epoch_IoU += IoU.item()
+            rLoss = epoch_loss / len(iterator)
+            rIou = epoch_IoU/len(iterator)
+            loss = ('%.2f' %rLoss)
+            Iou = ('%.2f' %rIou)
+    return loss,Iou
 
 
 import time
@@ -489,41 +494,27 @@ def epoch_time(start_time, end_time):
     elapsed_mins = int(elapsed_time / 60)
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
-label_dic
-# load the best model
-net.load_state_dict(torch.load('SegNet.pt',map_location=device))
 
-evaluation(net, test_loader, criterion, device)
+def startPredict(setPath,modelName):
+    # load the best model
+    net.load_state_dict(torch.load(('/Users/zhangshijie/Desktop/SegTest-Data/Model/'+modelName),map_location=device))
+    test_loader,n = getTestSet(setPath)
+    labels_used = get_labels_used()
+    label_dic = get_label_dic()
+    loss,Iou = evaluation(net, test_loader, criterion, device,label_dic)
 
-res = iter(test_loader)
-for i in range(n):
-    x,y = next(res)
-    img = gen_images(x)
+    res = iter(test_loader)
+    for i in range(n):
+        x,y = next(res)
+        img = gen_images(x)
 
-    img = img.to(device).type(torch.float)
-    net.eval()
-    with torch.no_grad():
-        y_pred = net(img)
+        img = img.to(device).type(torch.float)
+        net.eval()
+        with torch.no_grad():
+            y_pred = net(img)
 
-    y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
-    visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
-    matplotlib.image.imsave("/Users/zhangshijie/Desktop/result/r10/{}.png".format(i),visual_test)
+        y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
+        visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
+        matplotlib.image.imsave("/Users/zhangshijie/Desktop/result/{}.png".format(i),visual_test)
+    return loss,Iou
 
-
-# fig = plt.figure(figsize=(40, 20))
-#
-# for i in range(11, 15):
-#     ax = fig.add_subplot(2, n_images, i - 10)
-#     # visualization = visual_label(mask[i-11, :, :].cpu().numpy(), labels_used)
-#     ax.imshow(img.permute(0,2,3,1)[i-11,:,:,:].cpu().numpy())
-#     ax.set_title('Ground Truth')
-#     ax.axis('off')
-#
-#     ax = fig.add_subplot(2, n_images, i - 6)
-#     y_test = y_pred.permute(0, 2, 3, 1)[i-11, :, :, :].cpu().numpy()
-#     visual_test = visual_label(np.argmax(y_test, axis=2), labels_used)
-#     ax.imshow(visual_test)
-#     ax.set_title('Predicted')
-#     ax.axis('off')
-#
-# plt.show()
