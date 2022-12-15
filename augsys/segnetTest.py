@@ -1,5 +1,6 @@
 import torch
 import glob
+from augsys.generalMethod import *
 def startSegNet(testCase):
     return 0
 
@@ -23,4 +24,4 @@ test_loader = torch.utils.data.DataLoader(test_dataset,
                                           shuffle=True,
                                           num_workers=0)
 x,y = next(iter(test_loader))
-print(x[0])
+print(getImgName(x[0],8))

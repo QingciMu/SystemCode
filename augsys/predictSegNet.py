@@ -17,6 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import optim
 from collections import namedtuple
+from augsys.generalMethod import *
 
 # Make numpy printouts easier to read.
 np.set_printoptions(precision=3, suppress=True)
@@ -507,7 +508,7 @@ def startPredict(setPath,modelName):
     for i in range(n):
         x,y = next(res)
         img = gen_images(x)
-
+        fileName = getImgName(x[0],8)
         img = img.to(device).type(torch.float)
         net.eval()
         with torch.no_grad():
@@ -515,6 +516,6 @@ def startPredict(setPath,modelName):
 
         y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
         visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
-        matplotlib.image.imsave("/Users/zhangshijie/Desktop/result/{}.png".format(i),visual_test)
+        matplotlib.image.imsave("/Users/zhangshijie/Desktop/result/{}.png".format(fileName),visual_test)
     return loss,Iou
 
