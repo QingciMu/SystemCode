@@ -496,7 +496,7 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-def startPredict(setPath,modelName):
+def startSegNetPredict(setPath,resultPath,modelName):
     # load the best model
     net.load_state_dict(torch.load(('/Users/zhangshijie/Desktop/SegTest-Data/Model/'+modelName),map_location=device))
     test_loader,n = getTestSet(setPath)
@@ -516,6 +516,6 @@ def startPredict(setPath,modelName):
 
         y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
         visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
-        matplotlib.image.imsave("/Users/zhangshijie/Desktop/result/{}.png".format(fileName),visual_test)
+        matplotlib.image.imsave(resultPath+"/{}.png".format(fileName),visual_test)
     return loss,Iou
 

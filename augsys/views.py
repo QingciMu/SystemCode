@@ -454,7 +454,22 @@ def startTest(request):
             testSet = []
             dataset = ""
             num= 0
-            for i in range(len(testCase)):
+            testSetNum = len(testCase)
+            colorResult = '/Users/zhangshijie/Desktop/SegTest-Data/predictResult/' +taskName
+            resultPathLst = []
+            # 获取模型的类型 根据模型类型执行不同的预测任务
+            type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields'][
+                'modelType']
+            if not os.path.exists(colorResult):
+                os.mkdir(colorResult)
+            for i in range(testSetNum):
+                resultPath = colorResult +'/'+ testCase[i][0]
+                if not os.path.exists(resultPath):
+                    os.mkdir(resultPath)
+                resultPath = resultPath + '/' + testCase[i][1]
+                if not os.path.exists(resultPath):
+                    os.mkdir(resultPath)
+                resultPathLst.append(resultPath)
                 if(i != len(testCase)):
                     testStr = testCase[i][0] + '/'+ testCase[i][1]
                     # 保存测试用例集信息
@@ -466,11 +481,11 @@ def startTest(request):
                 testSet.append(setPath)
                 path = os.path.join(setPath,'image/*')
                 num += getFileNum(path)
-            # 获取模型的类型 根据模型类型执行不同的预测任务
-            type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields']['modelType']
+
             # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
-            #if(type == 'SegNet'):
-            loss,iou = startPredict(testSet[0],modelName)
+            if(type == 'SegNet'):
+                for i in range(testSetNum):
+                    loss,iou = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
             response['data'] = loss
             response['lst'] = iou
     except Exception as e:
