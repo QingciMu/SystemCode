@@ -385,6 +385,7 @@ def getAugDetail(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+# 删除扩增任务
 def deleteAugTask(request):
     response = {}
     try:
@@ -414,6 +415,7 @@ def deleteAugTask(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+#创建测试任务时 获取测试数据集 包括原始数据集和扩增数据集
 def getTestCase(request):
     response = {}
     try:
@@ -443,6 +445,7 @@ def startTest(request):
     response = {}
     try:
         if request.method == 'POST':
+            # 获取所有的表单数据
             data = json.loads(request.body.decode('utf-8'))
             taskName = data['taskName']
             taskDesc = data['taskDesc']
@@ -463,6 +466,7 @@ def startTest(request):
                 testSet.append(setPath)
                 path = os.path.join(setPath,'image/*')
                 num += getFileNum(path)
+            # 获取模型的类型 根据模型类型执行不同的预测任务
             type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields']['modelType']
             # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
             #if(type == 'SegNet'):
