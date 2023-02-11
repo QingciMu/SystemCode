@@ -101,24 +101,28 @@ def segtestAug(data):
         for j in range(512):
             randomPos.append((i, j))
     if 'Random' in methods:
+        models.Methods(taskName=name,method='Random').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(randomPos)
                 objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[0],name)
     if 'RandomInstance' in methods:
+        models.Methods(taskName=name,method='Random Instance').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(posLst)
                 objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[1],name)
     if 'RandomInsertion' in methods:
+        models.Methods(taskName=name,method='Random Insertion').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(randomPos)
                 objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[2],name)
     if 'SegTest' in methods:
+        models.Methods(taskName=name,method='No Random').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
