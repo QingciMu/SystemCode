@@ -17,6 +17,7 @@ from django.core.files import File
 import zipfile
 import glob
 from augsys.deeptestMethods import *
+from augsys.segtestMethods import *
 from augsys.getFileSize import *
 from augsys.uploadInstance import *
 import shutil
@@ -304,19 +305,12 @@ def deepTask(request):
     return JsonResponse(response)
 
 def segTask(request):
+    data = json.loads(request.body.decode('utf-8'))
     response = {}
     try:
-        if request.method == 'POST':
-            #预处理表达传过来的数据
-            data = json.loads(request.body.decode('utf-8'))
-            dataset = data['dataset']
-            taskName = data['taskName']
-            taskDesc = data['taskDesc']
-            fold = data['fold']
-            instanceList = data['instances'] # list
-            methods = data['methods'] # list
-            response['data'] = True
-            response['msg'] = 'success'
+        segtestAug(data)
+        response['data'] = True
+        response['msg'] = 'success'
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)

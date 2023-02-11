@@ -1,86 +1,30 @@
-import os.path
-
-from django.shortcuts import render
-from django.db import connection
-
-# Create your views here.
-# 需要导入相关的模块
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.core import serializers
-import json
-from augment.wsgi import *
-from augsys import models
-# Create your views here.
-from django.http import HttpResponse
-from django.core.files import File
-import zipfile
-import glob
-from augsys.deeptestMethods import *
-from augsys.getFileSize import *
-from augsys.uploadInstance import *
-import shutil
-
-import cv2
-import numpy as np
-import os
-import random
-import glob
 import codecs
 import math
 import json
+import glob
+import cv2
+import os
+import random
+import matplotlib.pyplot as plt
+import numpy as np
 import time
+from augsys.generalMethod import *
 
-starttime = time.time() # 开始记录
 
-def augmentlist():
-    with open('../obj_ifm.txt') as f:
-        objList = eval(f.read())
-    backgrounds = os.listdir('backgrounds')
-    backgrounds.remove('.DS_Store')
-    objpool = []
-    augmentList = []
-    for obj in objList:
-        brightness = int(0.299*obj[2] + 0.587*obj[3] + 0.114*obj[4])
-        size = int(math.sqrt(obj[1]))
-        weight = 1
-        if brightness > 50 :
-            weight = weight*2
-        if size < 150:
-            weight = weight*4
-        for i in range(weight):
-            objpool.append(obj)
-    for b in backgrounds:
-        # bimg = cv2.imread('/Users/houzhonghao/academic/Datasets/cityscapes/leftImg8bit_trainvaltest/leftImg8bit/test/whole/'+b)
-        # shape = bimg.shape
-        pointpool = []
-        for i in range(256):
-            for j in range(512):
-                pointpool.append((i,j))
-        selectedpoint = random.choice(pointpool)
-        selectedobj = random.choice(objpool)
-        augmentList.append([selectedpoint,selectedobj,b])
-        print(len(augmentList))
-    return augmentList
 
-def objectInsertion(labelName,imageName,obj,insertpoint,times):
-    count = len(os.listdir('data/hrnet_r10_'+str(times)+'_image/'))
-    newImagename = 'data/hrnet_r10_'+str(times)+'_image/'+str(count)+'.png'
-    newLabelname = 'data/hrnet_r10_'+str(times)+'_label/'+str(count)+'.png'
+
+def objectInsertion(labelName,imageName,obj,insertpoint,times,method,taskName):
+    image_name = getImgName(imageName,8)
+    newImagename = '/Users/zhangshijie/Desktop/SegTest-Data/AugResult/'+taskName+'/image/'+image_name+'_'+method+'_'+str(times)+'.png'
+    newLabelname = '/Users/zhangshijie/Desktop/SegTest-Data/AugResult/'+taskName+'/label/'+image_name+'_'+method+'_'+str(times)+'.png'
     img = cv2.imread(imageName)
     label = cv2.imread(labelName)
-    print(labelName)
-    img = cv2.resize(img,(label.shape[1],label.shape[0]))
-    # scale = img.shape[0]/1024
-
-
-    objName = '../obj/'+str(obj[0])+'.png'
-    # objlblName = 'obj_label/'+str(obj[0][0])+'.png'
-    objimg = cv2.imread(objName)
+    img = cv2.resize(img,(512,256))
+    label = cv2.resize(label,(512,256))
+    objimg = cv2.imread(obj)
     objimg = cv2.resize(objimg,(int(objimg.shape[1]/4),int(objimg.shape[0]/4)))
-    # objimg = cv2.resize(objimg,(int(objimg.shape[1]*scale),int(objimg.shape[0]*scale)))
-    centroid = (int(obj[6][0]/4),int(obj[6][1]/4))
-    objsize = obj[1]
+    centroid = (int(objimg.shape[0]/2),int(objimg.shape[1]/2))
+    print(centroid)
     realinsertpoint = (insertpoint[0]-centroid[0],insertpoint[1]-centroid[1])
     for i in range(min(objimg.shape[0],img.shape[0]-realinsertpoint[0])):
         for j in range(min(objimg.shape[1],img.shape[1]-realinsertpoint[1])):
@@ -88,34 +32,97 @@ def objectInsertion(labelName,imageName,obj,insertpoint,times):
                 continue
             if any(objimg[i][j] != [0,0,0]):
                 img[i+realinsertpoint[0]][j+realinsertpoint[1]] = objimg[i][j]
-                label[i+realinsertpoint[0]][j+realinsertpoint[1]] = [255,255,255]
-    for i in range(label.shape[0]):
-        for j in range(label.shape[1]):
-            if any(label[i][j] != [0,0,0]):
-                label[i][j] = [255,255,255]
-    cv2.imwrite(newImagename, img)
-    cv2.imwrite(newLabelname, label)
-    log = [str(count)+'.png',obj[1],obj[2],obj[3],obj[4],insertpoint,imageName]
-    f = codecs.open('log_hrnet_r10_'+str(times)+'.txt','a','utf-8')
-    f.write(str(log)+',')
-    f.close()
+                if('car' in obj):
+                    label[i+realinsertpoint[0]][j+realinsertpoint[1]] = [13,13,13]
+                else:
+                    label[i + realinsertpoint[0]][j + realinsertpoint[1]] = [11, 11, 11]
+    print(newImagename)
+    print(img)
+    cv2.imwrite(newImagename,img)
+    cv2.imwrite(newLabelname,label)
     return newImagename,newLabelname
 
 
+# starttime = time.time()  # 开始记录
+# endtime = time.time() # 结束记录
+# dtime = endtime - starttime
+# print("程序运行时间：%.4s s" % dtime)  # 显示到微秒
+def getFormInfo(data):
+    name = data['taskName']
+    desc = data['taskDesc']
+    dataset = data['dataset']
+    times = data['fold']
+    instance = data['instances']
+    methods =data['methods']
+    head_path = '/Users/zhangshijie/Desktop/SegTest-Data/dataset'
+    raw_img = os.path.join(head_path,dataset,'image/*')
+    img_list = sorted(glob.glob(raw_img))
+    file_num = len(methods) * times * len(img_list)
+    return name,desc,dataset,times,instance,methods
 
-def ruleGenerate(augmentList,times):
-    for augmentation in augmentList:
-        image = 'backgrounds/'+augmentation[2]
-        label = image.replace('backgrounds','hrnet_backseg')
-        insertpoint = augmentation[0]
-        obj = augmentation[1]
-        objectInsertion(label,image,obj,insertpoint,times)
-    return 0
+def getInsAndPos(instance):
+    posLst = []
+    for i in range(256):
+        for j in range(512):
+            dist = min(i, j, 255 - i, 511 - j)
+            weight = 1
+            if dist < 50:
+                weight = weight * 2
+            for k in range(weight):
+                posLst.append((i, j))
+    instLst = []
+    head_path = '/Users/zhangshijie/Desktop/SegTest-Data/InstancePool'
+    for i in range(len(instance)):
+        path = os.path.join(head_path,instance[i][1]+'/*')
+        instLst += glob.glob(path)
+    return instLst,posLst
 
-for times in [6]:
-    augmentList = augmentlist()
-    ruleGenerate(augmentList,times)
-endtime = time.time() # 结束记录
-dtime = endtime - starttime
 
-print("程序运行时间：%.8s s" % dtime)  # 显示到微秒
+
+def segtestAug(data):
+    name,desc,dataset,times,instance,methods = getFormInfo(data)
+    aug_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',name)
+    aug_img_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',name,'image')
+    aug_label_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult', name, 'label')
+    if not os.path.exists(aug_path):
+        os.mkdir((aug_path))
+    if not os.path.exists(aug_img_path):
+        os.mkdir(aug_img_path)
+    if not os.path.exists(aug_label_path):
+        os.mkdir(aug_label_path)
+    imageLst = glob.glob(os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',dataset +'/image/*'))
+    labelLst = glob.glob(os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',dataset +'/label/*'))
+    methodName = ['Random','RandomInst','RandomPos','NoRandom']
+    instLst,posLst = getInsAndPos(instance)
+    randomPos = []
+    for i in range(256):
+        for j in range(512):
+            randomPos.append((i, j))
+    if 'Random' in methods:
+        for i in range(len(imageLst)):
+            for j in range(times):
+                obj = random.choice(instLst)
+                pos = random.choice(randomPos)
+                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[0],name)
+    if 'RandomInstance' in methods:
+        for i in range(len(imageLst)):
+            for j in range(times):
+                obj = random.choice(instLst)
+                pos = random.choice(posLst)
+                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[1],name)
+    if 'RandomInsertion' in methods:
+        for i in range(len(imageLst)):
+            for j in range(times):
+                obj = random.choice(instLst)
+                pos = random.choice(randomPos)
+                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[2],name)
+    if 'SegTest' in methods:
+        for i in range(len(imageLst)):
+            for j in range(times):
+                obj = random.choice(instLst)
+                pos = random.choice(posLst)
+                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[3],name)
+    return True
+
+data ={'dataset': "m", 'taskName': "test22", 'taskDesc': "test segtest aug", 'fold': 5,'instances': [["Car", "car"], ["Person", "person"]],'methods': ["Random", "RandomInstance", "RandomInsertion", "SegTest"]}
+segtestAug(data)
