@@ -56,9 +56,9 @@ def getFormInfo(data):
     raw_img = os.path.join(head_path,dataset,'image/*')
     img_list = sorted(glob.glob(raw_img))
     file_num = len(methods) * times * len(img_list)
-    # new_task = models.AugTask(name=name, desc=desc, fileType='Image', dataset=dataset, times=times, num=file_num,
-    #                           augType='SegTest', status='Running')
-    # new_task.save()
+    new_task = models.AugTask(name=name, desc=desc, fileType='Image', dataset=dataset, times=times, num=file_num,
+                              augType='SegTest', status='Running')
+    new_task.save()
     return name,desc,dataset,times,instance,methods
 
 def getInsAndPos(instance):
@@ -124,7 +124,7 @@ def segtestAug(data):
                 obj = random.choice(instLst)
                 pos = random.choice(posLst)
                 objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[3],name)
+    task_data = models.AugTask.objects.get(name=name)
+    task_data.status = 'Success'
+    task_data.save()
     return True
-
-data ={'dataset': "m", 'taskName': "test22", 'taskDesc': "test segtest aug", 'fold': 5,'instances': [["Car", "car"], ["Person", "person"]],'methods': ["Random", "RandomInstance", "RandomInsertion", "SegTest"]}
-segtestAug(data)
