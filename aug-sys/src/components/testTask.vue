@@ -66,7 +66,7 @@
           <el-form-item>
             <el-button v-show="active !== 0" @click="previous()">Previous</el-button>
             <el-button v-show="active !== 2" @click="nextStep()">Next</el-button>
-            <el-button v-show="active === 2" type="primary" @click="submit('metrics')">Submit</el-button>
+            <el-button v-show="active === 2" type="primary" :loading="isLoading" @click="submit('metrics')">Submit</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -75,10 +75,11 @@
 </template>
 
 <script>
-import { getTestCase, getModel, startTest } from '../api/api'
+import { getTestCase, getModel, startTest, showMessage } from '../api/api'
 export default {
   data () {
     return {
+      isLoading: false,
       titleLst: ['Basic Task Information', 'Set the Model and DataSet', 'Set the Evaluation Metrics'],
       title: 'Basic Task Information',
       active: 0,
@@ -117,6 +118,9 @@ export default {
     this.getAllModel()
   },
   methods: {
+    jumpSuccess () {
+      this.$router.push({path: '/testSuccess'})
+    },
     getAllModel () {
       getModel().then(
         JSON => {
@@ -168,11 +172,20 @@ export default {
       this.$refs[formName].validate(validate => {
         if (validate) {
           const formData = Object.assign(this.basic, this.datas, this.metrics)
+          this.isLoading = true
           startTest(formData).then(
             JSON => {
-              return true
+              if (JSON.data.data) {
+                this.isLoading = false
+                this.jumpSuccess()
+              }
             }
-          )
+          ).catch(e => {
+            this.isLoading = false
+            showMessage({ message: e.msg, type: 'error' })
+          })
+        } else {
+          return false
         }
       })
     }
