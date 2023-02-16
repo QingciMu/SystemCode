@@ -501,13 +501,14 @@ def startTest(request):
                 num += getFileNum(path)
 
             models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
-            doc = SimpleDocTemplate("%s.pdf" %taskName)
+            doc = SimpleDocTemplate("/Users/zhangshijie/Desktop/SegTest-Data/report/%s.pdf" %taskName)
             story = []
+            dataLst = dataset.split(' ')
             addTaskInfo(taskName,story)
             if(type == 'SegNet'):
                 for i in range(testSetNum):
                     loss,iou = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
-                    story = addTestResult(testSet[i],story,loss,iou)
+                    story = addTestResult(dataLst[i],story,loss,iou)
             task_data = models.PredictTask.objects.get(taskName=taskName)
             task_data.status = 'Success'
             task_data.save()
