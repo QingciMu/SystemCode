@@ -415,20 +415,21 @@ def getTestTask(request):
     response = {}
     try:
         modelDetail = eval(serializers.serialize("json", models.PredictTask.objects.all()))
-        response['code'] = 200
         result=[]
         for i in range(len(modelDetail)):
             temp = {}
             temp['taskName'] = modelDetail[i]['pk']
-            temp['fileType'] = modelDetail[i]['fields']['fileType']
+            temp['testCase'] = modelDetail[i]['fields']['dataset']
             temp['fileNum'] = modelDetail[i]['fields']['num']
-            temp['Method'] = modelDetail[i]['fields']['augType']
+            temp['Model'] = modelDetail[i]['fields']['model']
             temp['Status'] = modelDetail[i]['fields']['status']
-            temp['createTime'] = modelDetail[i]['fields']['startTime']
+            temp['createTime'] = modelDetail[i]['fields']['createTime']
             result.append(temp)
+        response['code'] = 200
         response['data'] = result
         response['msg'] = 'success'
     except Exception as e:
+        response['data'] = False
         response['msg'] = str(e)
     return JsonResponse(response)
 

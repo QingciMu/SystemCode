@@ -70,7 +70,7 @@
 <script>
 import { getTestTask, deleteTestTask } from '../api/api.js'
 export default {
-  name: 'augList',
+  name: 'preList',
   data () {
     return {
       currentPage: 1,
@@ -118,11 +118,10 @@ export default {
       })
     },
     handleDownload (row) {
-      const fileUrl = `http://127.0.0.1:8081/TestResult/${row.taskName}.zip`
+      const fileUrl = `http://127.0.0.1:8081/report/${row.taskName}.pdf`
       const link = document.createElement('a')
       link.href = fileUrl
       link.style.display = 'none'
-      link.download = `${row.name}.zip`
       link.click()
     },
     confirmDelete () {
