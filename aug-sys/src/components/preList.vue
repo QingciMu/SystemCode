@@ -132,7 +132,7 @@ export default {
             this.isLoading = false
             this.closeDel()
             this.showMessage({ message: 'Task deleted successfully', type: 'success' })
-            this.getTaskInfo()
+            this.getTestTaskInfo()
           } else {
             this.isLoading = false
             this.closeDel()

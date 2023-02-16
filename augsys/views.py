@@ -432,7 +432,27 @@ def getTestTask(request):
         response['data'] = False
         response['msg'] = str(e)
     return JsonResponse(response)
-
+#删除测试任务
+def deleteTestTask(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
+            taskName =data['taskName']
+            dirPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/predictResult',taskName)
+            if(os.path.exists(dirPath)):
+                shutil.rmtree(dirPath)
+            reportPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/report',taskName+'.pdf')
+            if(os.path.exists(reportPath)):
+                os.remove(reportPath)
+            models.PredictTask.objects.filter(taskName=taskName).delete()
+            response['code'] = 200
+            response['data'] = True
+            response['msg'] = 'success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)
 
 #创建测试任务时 获取测试数据集 包括原始数据集和扩增数据集
 def getTestCase(request):

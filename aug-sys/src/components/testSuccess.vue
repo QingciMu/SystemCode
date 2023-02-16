@@ -11,7 +11,6 @@
 </template>
 <script>
 export default {
-  data () {},
   methods: {
     jumpList () {
       this.$router.push({path: '/preList'})
