@@ -23,6 +23,8 @@ from augsys.uploadInstance import *
 import shutil
 from augsys.generalMethod import *
 from augsys.predictSegNet import *
+from reportlab.platypus import SimpleDocTemplate, Image, Paragraph,Table,TableStyle
+from augsys.generateReport import *
 
 
 
@@ -409,6 +411,28 @@ def deleteAugTask(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def getTestTask(request):
+    response = {}
+    try:
+        modelDetail = eval(serializers.serialize("json", models.PredictTask.objects.all()))
+        response['code'] = 200
+        result=[]
+        for i in range(len(modelDetail)):
+            temp = {}
+            temp['taskName'] = modelDetail[i]['pk']
+            temp['fileType'] = modelDetail[i]['fields']['fileType']
+            temp['fileNum'] = modelDetail[i]['fields']['num']
+            temp['Method'] = modelDetail[i]['fields']['augType']
+            temp['Status'] = modelDetail[i]['fields']['status']
+            temp['createTime'] = modelDetail[i]['fields']['startTime']
+            result.append(temp)
+        response['data'] = result
+        response['msg'] = 'success'
+    except Exception as e:
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+
 #创建测试任务时 获取测试数据集 包括原始数据集和扩增数据集
 def getTestCase(request):
     response = {}
@@ -476,12 +500,20 @@ def startTest(request):
                 path = os.path.join(setPath,'image/*')
                 num += getFileNum(path)
 
-            # models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
+            models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
+            doc = SimpleDocTemplate("%s.pdf" %taskName)
+            story = []
+            addTaskInfo(taskName,story)
             if(type == 'SegNet'):
                 for i in range(testSetNum):
                     loss,iou = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
-            response['data'] = loss
-            response['lst'] = iou
+                    story = addTestResult(testSet[i],story,loss,iou)
+            task_data = models.PredictTask.objects.get(taskName=taskName)
+            task_data.status = 'Success'
+            task_data.save()
+            doc.build(story)
+            response['code'] = 200
+            response['data'] = True
     except Exception as e:
         response['data'] = False
         response['msg'] = str(e)

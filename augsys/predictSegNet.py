@@ -10,8 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-import torchvision.transforms as transforms
-import torchvision.datasets as datasets
+# import torchvision.transforms as transforms
+# import torchvision.datasets as datasets
 
 import torch.nn as nn
 import torch.nn.functional as F
