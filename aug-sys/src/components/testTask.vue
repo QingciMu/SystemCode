@@ -46,18 +46,51 @@
                 <el-radio :label=0>No</el-radio>
               </el-radio-group>
             </el-form-item>
+            <template v-if="metrics.UseIOU === 1">
+              <el-form-item label="IOU threshold:" prop="IOU">
+                <el-input-number v-model="metrics.IOU"
+                  size="small"
+                  :precision="2"
+                  :step="0.1"
+                  :min="0"
+                  :max="1">
+                </el-input-number>
+              </el-form-item>
+            </template>
             <el-form-item label="OSE:" prop="UseOSE" required>
               <el-radio-group v-model="metrics.UseOSE">
                 <el-radio :label=1>Yes</el-radio>
                 <el-radio :label=0>No</el-radio>
               </el-radio-group>
             </el-form-item>
+            <template v-if="metrics.UseOSE === 1">
+              <el-form-item label="OSE threshold:" prop="OSE">
+                <el-input-number v-model="metrics.IOU"
+                  size="small"
+                  :precision="2"
+                  :step="0.1"
+                  :min="0"
+                  :max="1">
+                </el-input-number>
+              </el-form-item>
+            </template>
             <el-form-item label="USE:" prop="UseUSE" required>
               <el-radio-group v-model="metrics.UseUSE">
                 <el-radio :label=1>Yes</el-radio>
                 <el-radio :label=0>No</el-radio>
               </el-radio-group>
             </el-form-item>
+            <template v-if="metrics.UseUSE === 1">
+              <el-form-item label="USE threshold:" prop="USE">
+                <el-input-number v-model="metrics.USE"
+                  size="small"
+                  :precision="2"
+                  :step="0.1"
+                  :min="0"
+                  :max="1">
+                </el-input-number>
+              </el-form-item>
+            </template>
           </el-form>
         </template>
       </div>
@@ -94,7 +127,10 @@ export default {
       metrics: {
         UseIOU: 1,
         UseUSE: 1,
-        UseOSE: 1
+        UseOSE: 1,
+        IOU: 0.5,
+        USE: 0.5,
+        OSE: 0.5
       },
       modelOptions: [],
       testCaseOptions: [
@@ -218,7 +254,7 @@ export default {
   margin-top: 20px;
   margin-left: 5%;
   margin-right: 5%;
-  min-height:400px;
+  min-height:500px;
   max-height: 80%;
   border: solid;
   border-radius: 10px;
@@ -228,7 +264,7 @@ export default {
     width: 300px;
 }
 .form-content {
-  height: 300px;
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
