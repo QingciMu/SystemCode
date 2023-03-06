@@ -33,9 +33,9 @@ def objectInsertion(labelName,imageName,obj,insertpoint,times,method,taskName):
             if any(objimg[i][j] != [0,0,0]):
                 img[i+realinsertpoint[0]][j+realinsertpoint[1]] = objimg[i][j]
                 if('car' in obj):
-                    label[i+realinsertpoint[0]][j+realinsertpoint[1]] = [13,13,13]
+                    label[i+realinsertpoint[0]][j+realinsertpoint[1]] = [26,26,26]
                 else:
-                    label[i + realinsertpoint[0]][j + realinsertpoint[1]] = [11, 11, 11]
+                    label[i + realinsertpoint[0]][j + realinsertpoint[1]] = [24,24,24]
     cv2.imwrite(newImagename, img)
     cv2.imwrite(newLabelname, label)
     return newImagename,newLabelname
