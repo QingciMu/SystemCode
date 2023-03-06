@@ -95,6 +95,7 @@ class TestCase(models.Model):
     class Meta:
         db_table = 'testCase'
 
+
 class Threshold(models.Model):
     id = models.AutoField(primary_key=True,null=False,unique=True)
     taskName = models.CharField(max_length=255,null=False)
@@ -103,3 +104,14 @@ class Threshold(models.Model):
 
     class Meta:
         db_table = 'threshold'
+
+class TestResult(models.Model):
+    id = models.AutoField(primary_key=True,null=False,unique=True)
+    taskName = models.CharField(max_length=255,null=False)
+    dataset = models.CharField(max_length=255,null=False)
+    IOU = models.CharField(max_length=255,null=True)
+    OSE = models.CharField(max_length=255,null=True)
+    USE = models.CharField(max_length=255,null=True)
+
+    class Meta:
+        db_table = 'testResult'

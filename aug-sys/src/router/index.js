@@ -14,6 +14,7 @@ import uploadSuccess from '@/components/uploadSuccess'
 import preList from '@/components/preList'
 import testTask from '@/components/testTask'
 import testSuccess from '@/components/testSuccess'
+import preTaskDetail from '@/components/preTaskDetail'
 
 Vue.use(Router)
 
@@ -89,6 +90,11 @@ export default new Router({
       path: '/testSuccess',
       name: 'testSuccess',
       component: testSuccess
+    },
+    {
+      path: '/preTaskDetail',
+      name: 'preTaskDetail',
+      component: preTaskDetail
     }
   ]
 })
