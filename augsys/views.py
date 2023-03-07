@@ -574,3 +574,54 @@ def startTest(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+def getTestDetail(request):
+    response = {}
+    try:
+        if request.method == 'POST':
+            result = {}
+            metricData = []
+            datasetInfo = []
+            data = json.loads(request.body.decode('utf-8'))
+            taskName = data['taskName']
+            taskInfo = {}
+            testTask = eval(serializers.serialize("json", models.PredictTask.objects.filter(taskName = taskName)))
+            taskInfo['taskName'] = testTask[0]['pk']
+            taskInfo['taskDesc'] = testTask[0]['fields']['taskDesc']
+            taskInfo['dataset'] = testTask[0]['fields']['dataset']
+            taskInfo['model'] = testTask[0]['fields']['model']
+
+            metricInfo = eval(serializers.serialize("json", models.Threshold.objects.filter(taskName = taskName)))
+            for i in range(len(metricInfo)):
+                temp = {}
+                temp['metric'] = metricInfo[i]['fields']['metric']
+                temp['threshold'] = metricInfo[i]['fields']['threshold']
+                metricData.append(temp)
+            testResult = eval(serializers.serialize("json", models.TestResult.objects.filter(taskName = taskName)))
+            for i in range(len(testResult)):
+                datasetLst = []
+                errorrateLst = []
+                datasetLst.append((testResult[i]['fields']['dataset'].split('/'))[-1])
+                temp ={}
+                temp['metric'] = 'IOU'
+                temp['errorRate'] = testResult[i]['fields']['IOU']
+                errorrateLst.append(temp)
+                temp ={}
+                temp['metric'] = 'OSE'
+                temp['errorRate'] = testResult[i]['fields']['OSE']
+                errorrateLst.append(temp)
+                temp ={}
+                temp['metric'] = 'USE'
+                temp['errorRate'] = testResult[i]['fields']['USE']
+                errorrateLst.append(temp)
+                datasetLst.append(errorrateLst)
+                datasetInfo.append(datasetLst)
+            result['taskInfo'] = taskInfo
+            result['metricData'] = metricData
+            result['datasetInfo'] = datasetInfo
+            response['code']  = 200
+            response['data'] = result
+            response['msg'] = 'Success'
+    except Exception as e:
+        response['data'] = False
+        response['msg'] = str(e)
+    return JsonResponse(response)

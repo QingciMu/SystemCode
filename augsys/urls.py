@@ -23,5 +23,7 @@ urlpatterns = [
     re_path(r'getTestCase',views.getTestCase),
     re_path(r'deleteTestTask',views.deleteTestTask),
     re_path(r'startTest',views.startTest),
-    re_path(r'getTestTask',views.getTestTask)
+    re_path(r'getTestTask',views.getTestTask),
+    re_path(r'getTestDetail', views.getTestDetail)
+
 ]

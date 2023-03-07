@@ -21,6 +21,7 @@ const getTestTaskUrl = ip + 'getTestTask'
 const deleteTestTaskUrl = ip + 'deleteTestTask'
 const getTestCaseUrl = ip + 'getTestCase'
 const startTestUrl = ip + 'startTest'
+const getTestDetailUrl = ip + 'getTestDetail'
 export const getDatasetDetail = () => {
   return axios.get(datasetUrl)
 }
@@ -77,4 +78,7 @@ export const getTestCase = () => {
 }
 export const startTest = (parms) => {
   return axios.post(startTestUrl, parms)
+}
+export const getTestDetail = (parms) => {
+  return axios.post(getTestDetailUrl, parms)
 }
