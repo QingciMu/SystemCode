@@ -18,8 +18,6 @@
             <span class="task-info">{{model}}</span>
           </el-form-item>
           <el-form-item label="Test Metric:" class="detail">
-          </el-form-item>
-          <el-form-item>
             <el-table :data="metricData" style="width:50%">
               <el-table-column
                 prop="metric"
