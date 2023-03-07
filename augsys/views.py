@@ -23,8 +23,10 @@ from augsys.uploadInstance import *
 import shutil
 from augsys.generalMethod import *
 from augsys.predictSegNet import *
+from augsys.segnetTest import *
 from reportlab.platypus import SimpleDocTemplate, Image, Paragraph,Table,TableStyle
 from augsys.generateReport import *
+from augsys.getMetricResult import *
 
 
 
@@ -490,25 +492,48 @@ def startTest(request):
             taskDesc = data['taskDesc']
             modelName = data['model']
             testCase = data['testCase']
+            UseIOU =data['UseIOU']
+            UseUSE = data['UseUSE']
+            UseOSE = data['UseOSE']
+            if(UseIOU == 1):
+                min_iou = data['IOU']
+                models.Threshold(taskName=taskName,metric='IOU',threshold=str(min_iou)).save()
+            if (UseUSE == 1):
+                min_use = data['USE']
+                models.Threshold(taskName=taskName,metric='USE',threshold=str(min_use)).save()
+            if(UseOSE == 1):
+                min_ose = data['OSE']
+                models.Threshold(taskName=taskName,metric='OSE',threshold=str(min_ose)).save()
             testSet = []
             dataset = ""
             num= 0
             testSetNum = len(testCase)
             colorResult = '/Users/zhangshijie/Desktop/SegTest-Data/predictResult/' +taskName
+            blackwhitepath = '/Users/zhangshijie/Desktop/SegTest-Data/predictAfter/' +taskName
             resultPathLst = []
+            BLresultPathLst = []
             # 获取模型的类型 根据模型类型执行不同的预测任务
             type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields'][
                 'modelType']
             if not os.path.exists(colorResult):
                 os.mkdir(colorResult)
+            if not os.path.exists(blackwhitepath):
+                os.mkdir(blackwhitepath)
             for i in range(testSetNum):
                 resultPath = colorResult +'/'+ testCase[i][0]
+                BLresultPath = blackwhitepath + '/' + testCase[i][0]
                 if not os.path.exists(resultPath):
                     os.mkdir(resultPath)
+                if not os.path.exists(BLresultPath):
+                    os.mkdir(BLresultPath)
                 resultPath = resultPath + '/' + testCase[i][1]
+                BLresultPath = BLresultPath + '/' + testCase[i][1]
                 if not os.path.exists(resultPath):
                     os.mkdir(resultPath)
                 resultPathLst.append(resultPath)
+                if not os.path.exists(BLresultPath):
+                    os.mkdir(BLresultPath)
+                BLresultPathLst.append(BLresultPath)
                 if(i != len(testCase)):
                     testStr = testCase[i][0] + '/'+ testCase[i][1]
                     # 保存测试用例集信息
@@ -528,7 +553,15 @@ def startTest(request):
             addTaskInfo(taskName,story)
             if(type == 'SegNet'):
                 for i in range(testSetNum):
-                    loss,iou = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
+                    loss,iou,IOUError = startSegNetPredict(testSet[i],resultPathLst[i],modelName,min_iou)
+                    transSegNetResult(resultPathLst[i],BLresultPathLst[i]+'/')
+                    dataNamePos = len(testSet[i].split('/'))-1
+                    tempLst = testSet[i].split('/')
+                    dataName = tempLst[dataNamePos]
+                    labelPath = '/Users/zhangshijie/Desktop/SegTest-Data/labelAfter/'+dataName
+                    USERate,OSERate = getErrorResult(BLresultPathLst[i],labelPath,min_use,min_use)
+                    models.TestResult(taskName=taskName,dataset=dataLst[i],IOU=str(IOUError),OSE=str(OSERate),USE=str(USERate)).save()
+                    drawPicture(UseIOU,UseOSE,UseUSE,IOUError,OSERate,USERate,taskName,dataName)
                     story = addTestResult(dataLst[i],story,loss,iou)
             task_data = models.PredictTask.objects.get(taskName=taskName)
             task_data.status = 'Success'

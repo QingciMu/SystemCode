@@ -461,9 +461,10 @@ def train(model, iterator, optimizer, criterion, device, label_dic):
     return epoch_loss / len(iterator), epoch_IoU / len(iterator)
 
 
-def evaluation(model, iterator, criterion, device,label_dic):
+def evaluation(model, iterator, criterion, device,label_dic,min_iou):
     epoch_loss = 0
     epoch_IoU = 0
+    errornum = 0
 
     model.eval()
 
@@ -477,14 +478,17 @@ def evaluation(model, iterator, criterion, device,label_dic):
             loss = criterion(y_pred, y)
 
             IoU = mean_iou(y_pred, y)
+            if (IoU < min_iou):
+                errornum += 1
 
             epoch_loss += loss.item()
             epoch_IoU += IoU.item()
-            rLoss = epoch_loss / len(iterator)
-            rIou = epoch_IoU/len(iterator)
-            loss = ('%.2f' %rLoss)
-            Iou = ('%.2f' %rIou)
-    return loss,Iou
+        rLoss = epoch_loss / len(iterator)
+        rIou = epoch_IoU/len(iterator)
+        loss = ('%.2f' %rLoss)
+        Iou = ('%.2f' %rIou)
+        errorRate = round(errornum/(len(iterator)),2)
+    return loss,Iou,errorRate
 
 
 import time
@@ -496,13 +500,13 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-def startSegNetPredict(setPath,resultPath,modelName):
+def startSegNetPredict(setPath,resultPath,modelName,min_iou):
     # load the best model
     net.load_state_dict(torch.load(('/Users/zhangshijie/Desktop/SegTest-Data/Model/'+modelName),map_location=device))
     test_loader,n = getTestSet(setPath)
     labels_used = get_labels_used()
     label_dic = get_label_dic()
-    loss,Iou = evaluation(net, test_loader, criterion, device,label_dic)
+    loss,Iou,errorRate = evaluation(net, test_loader, criterion, device,label_dic,min_iou)
 
     res = iter(test_loader)
     for i in range(n):
@@ -517,5 +521,5 @@ def startSegNetPredict(setPath,resultPath,modelName):
         y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
         visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
         matplotlib.image.imsave(resultPath+"/{}.png".format(fileName),visual_test)
-    return loss,Iou
+    return loss,Iou,errorRate
 

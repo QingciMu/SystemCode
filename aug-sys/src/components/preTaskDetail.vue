@@ -2,7 +2,7 @@
   <div style="display:flex">
     <el-button @click="back()" style="display:flex;margin-top: 5px; justify-content:center;align-items:center;width:10px;height:20px;padding-left: 12px;padding-right: 12px;"><i class="el-icon-back"></i></el-button>
     <div class="task-body">
-      <div class="title">Task Detail</div>
+      <div class="title">Test Report</div>
       <div class = "task-detail">
         <el-form label-width="300px" size="mini">
           <el-form-item label="Task Name:" class="detail">

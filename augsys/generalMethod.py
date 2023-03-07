@@ -2,6 +2,9 @@ import glob
 import os
 import zipfile
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def zipDir(dirpath, outFullName):
     """
@@ -27,3 +30,28 @@ def getFileNum(path):
 def getImgName(imgPath,i):
     img = (imgPath.split('/'))[i]
     return (img.split('.'))[0]
+
+def drawPicture(useIOU,useOSE,useUSE,IOU,OSE,USE,taskName,dataset):
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    x_data =[]
+    y_data = []
+    if(useIOU ==1):
+        x_data.append('IOU')
+        y_data.append(IOU)
+    if(useOSE == 1):
+        x_data.append('OSE')
+        y_data.append(OSE)
+    if(useUSE == 1):
+        x_data.append('USE')
+        y_data.append(USE)
+    for i in range(len(x_data)):
+        plt.bar(x_data[i], y_data[i])
+    # 设置图片名称
+    plt.title("测试结果",fontname = 'SimHei')
+    # 设置x轴标签名
+    plt.xlabel("评价指标",fontname = 'SimHei')
+    # 设置y轴标签名
+    plt.ylabel("致错率",fontname = 'SimHei')
+    # 显示
+    plt.savefig('/Users/zhangshijie/Desktop/SegTest-Data/fig/%s.png'%(taskName+'-'+dataset))
+    return True
