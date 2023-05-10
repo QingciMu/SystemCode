@@ -75,6 +75,10 @@ export default {
         {
           value: 5,
           label: 5
+        },
+        {
+          value: 100,
+          label: 100
         }
       ],
       instanceOptions: [

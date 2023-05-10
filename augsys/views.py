@@ -625,3 +625,4 @@ def getTestDetail(request):
         response['data'] = False
         response['msg'] = str(e)
     return JsonResponse(response)
+
