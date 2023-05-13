@@ -11,25 +11,42 @@
           <el-form-item label="Task Description:" class="detail">
             <span class="task-info">{{taskDesc}}</span>
           </el-form-item>
-          <el-form-item label="Data Set:" class="detail">
+          <el-form-item label="Data Set:" class="detail" >
             <span class="task-info">{{dataset}}</span>
           </el-form-item>
           <el-form-item label="Test Model:" class="detail">
             <span class="task-info">{{model}}</span>
           </el-form-item>
         </el-form>
-        <div v-for="data in datasetInfo" :key="data[0]">
-          <div class="sub-title">Dataset {{ data[0] }}</div>
-          <el-form label-width="300px" size="small">
-            <el-form-item label="Metric result:"  class="detail">
-              <el-table :data="data[1]" style="width:50%">
+        <!-- <div class="title1">Test Result</div> -->
+          <div class="sub-title">Test Result</div>
+          <el-form label-width="200px" >
+            <el-form-item>
+              <el-table :data="datasetInfo" style="width:100%" size="big">
                 <el-table-column
-                  prop="metric"
-                  label="metric">
+                  prop="dataset"
+                  label="Dataset"
+                  width="180">
                 </el-table-column>
                 <el-table-column
-                  prop="errorRate"
-                  label="errorRate">
+                  prop="r1"
+                  label="ϵ=0.05"
+                  width="180">
+                </el-table-column>
+                <el-table-column
+                  prop="r2"
+                  label="ϵ=0.10"
+                  width="180">
+                </el-table-column>
+                <el-table-column
+                  prop="r3"
+                  label="ϵ=0.15"
+                  width="180">
+                </el-table-column>
+                <el-table-column
+                  prop="r4"
+                  label="ϵ=0.20"
+                  width="180">
                 </el-table-column>
               </el-table>
             </el-form-item>
@@ -37,7 +54,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import { getTestDetail } from '../api/api'
@@ -66,7 +82,6 @@ export default {
           this.taskDesc = taskDesc || '-'
           this.dataset = dataset
           this.model = model
-          this.metricData = dataInfo.data.metricData
           this.datasetInfo = dataInfo.data.datasetInfo
         }
 
@@ -91,6 +106,15 @@ export default {
   font-weight: bold;
   text-align: center;
 }
+
+.title1 {
+  display: flex;
+  align-items: center;
+  font-family: sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}
 .sub-title {
   display: flex;
   align-items: center;
@@ -102,8 +126,8 @@ export default {
 .task-info {
   display: flex;
   flex-wrap: wrap;
-  width: 400px;
-  max-width: 400px;
+  width: 800px;
+  max-width: 800px;
   font-size: 17px;
 }
 .task-detail {
