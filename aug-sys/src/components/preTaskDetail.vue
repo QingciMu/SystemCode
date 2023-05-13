@@ -17,18 +17,6 @@
           <el-form-item label="Test Model:" class="detail">
             <span class="task-info">{{model}}</span>
           </el-form-item>
-          <el-form-item label="Test Metric:" class="detail">
-            <el-table :data="metricData" style="width:50%">
-              <el-table-column
-                prop="metric"
-                label="metric">
-              </el-table-column>
-              <el-table-column
-                prop="threshold"
-                label="threshold">
-              </el-table-column>
-            </el-table>
-          </el-form-item>
         </el-form>
         <div v-for="data in datasetInfo" :key="data[0]">
           <div class="sub-title">Dataset {{ data[0] }}</div>

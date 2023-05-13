@@ -27,6 +27,7 @@ from augsys.segnetTest import *
 from reportlab.platypus import SimpleDocTemplate, Image, Paragraph,Table,TableStyle
 from augsys.generateReport import *
 from augsys.getMetricResult import *
+from augsys.metaResult import *
 
 
 
@@ -503,6 +504,9 @@ def startTest(request):
                 'modelType']
             if not os.path.exists(colorResult):
                 os.mkdir(colorResult)
+            raw_set = []
+            aug_set = []
+            num_set = []
             for i in range(testSetNum):
                 resultPath = colorResult
                 resultPath = resultPath + '/' + testCase[i][1]
@@ -520,11 +524,20 @@ def startTest(request):
                 testSet.append(setPath)
                 path = os.path.join(setPath,'*')
                 num += getFileNum(path)
+                if(testCase[i][0] == 'DataSet'):
+                    raw_set.append(testCase[i][1])
+                else:
+                    aug_set.append(testCase[i][1])
+                    num_set.append(getFileNum(path))
 
             models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
             if(type == 'SegNet'):
                 for i in range(testSetNum):
                     startSegNetPredict(testSet[i],resultPathLst[i],modelName)
+                for i in range(len(aug_set)):
+                    c0,c1,c2,c3 = getMetaResult(taskName,raw_set[0],aug_set[i],num_set[i])
+                    models.MetaResult(dataName='AugResult/'+aug_set[i], r1=c0,r2=c1,r3=c2,r4=c3).save()
+
             task_data = models.PredictTask.objects.get(taskName=taskName)
             task_data.status = 'Success'
             task_data.save()
