@@ -25,8 +25,8 @@ np.set_printoptions(precision=3, suppress=True)
 
 def getTestSet(setPath):
     # loading training and validation datasets, test dataset doesn't have annotations so we will use split traning data into train and test data
-    test_label_data_path = setPath + '/label'
-    test_img_path = setPath + '/image'
+    test_label_data_path = setPath
+    test_img_path = setPath
 
     test_labels = sorted(glob.glob(test_label_data_path + "/*.png"))
     test_inp = sorted(glob.glob(test_img_path + "/*.png"))
@@ -461,7 +461,7 @@ def train(model, iterator, optimizer, criterion, device, label_dic):
     return epoch_loss / len(iterator), epoch_IoU / len(iterator)
 
 
-def evaluation(model, iterator, criterion, device,label_dic,min_iou):
+def evaluation(model, iterator, criterion, device,label_dic):
     epoch_loss = 0
     epoch_IoU = 0
     errornum = 0
@@ -478,8 +478,6 @@ def evaluation(model, iterator, criterion, device,label_dic,min_iou):
             loss = criterion(y_pred, y)
 
             IoU = mean_iou(y_pred, y)
-            if (IoU < min_iou):
-                errornum += 1
 
             epoch_loss += loss.item()
             epoch_IoU += IoU.item()
@@ -500,19 +498,18 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-def startSegNetPredict(setPath,resultPath,modelName,min_iou):
+def startSegNetPredict(setPath,resultPath,modelName):
     # load the best model
     net.load_state_dict(torch.load(('/Users/zhangshijie/Desktop/SegTest-Data/Model/'+modelName),map_location=device))
     test_loader,n = getTestSet(setPath)
     labels_used = get_labels_used()
     label_dic = get_label_dic()
-    loss,Iou,errorRate = evaluation(net, test_loader, criterion, device,label_dic,min_iou)
 
     res = iter(test_loader)
     for i in range(n):
         x,y = next(res)
         img = gen_images(x)
-        fileName = getImgName(x[0],8)
+        fileName = getImgName(x[0],7)
         img = img.to(device).type(torch.float)
         net.eval()
         with torch.no_grad():
@@ -521,5 +518,5 @@ def startSegNetPredict(setPath,resultPath,modelName,min_iou):
         y_test = y_pred.permute(0,2,3,1)[0,:,:,:].cpu().numpy()
         visual_test = visual_label(np.argmax(y_test,axis=2),labels_used)
         matplotlib.image.imsave(resultPath+"/{}.png".format(fileName),visual_test)
-    return loss,Iou,errorRate
+    return True
 

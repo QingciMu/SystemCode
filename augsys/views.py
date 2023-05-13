@@ -497,31 +497,18 @@ def startTest(request):
             num= 0
             testSetNum = len(testCase)
             colorResult = '/Users/zhangshijie/Desktop/SegTest-Data/predictResult/' +taskName
-            blackwhitepath = '/Users/zhangshijie/Desktop/SegTest-Data/predictAfter/' +taskName
             resultPathLst = []
-            BLresultPathLst = []
             # 获取模型的类型 根据模型类型执行不同的预测任务
             type = eval(serializers.serialize("json", models.Model.objects.filter(name=modelName)))[0]['fields'][
                 'modelType']
             if not os.path.exists(colorResult):
                 os.mkdir(colorResult)
-            if not os.path.exists(blackwhitepath):
-                os.mkdir(blackwhitepath)
             for i in range(testSetNum):
-                resultPath = colorResult +'/'+ testCase[i][0]
-                BLresultPath = blackwhitepath + '/' + testCase[i][0]
-                if not os.path.exists(resultPath):
-                    os.mkdir(resultPath)
-                if not os.path.exists(BLresultPath):
-                    os.mkdir(BLresultPath)
+                resultPath = colorResult
                 resultPath = resultPath + '/' + testCase[i][1]
-                BLresultPath = BLresultPath + '/' + testCase[i][1]
                 if not os.path.exists(resultPath):
                     os.mkdir(resultPath)
                 resultPathLst.append(resultPath)
-                if not os.path.exists(BLresultPath):
-                    os.mkdir(BLresultPath)
-                BLresultPathLst.append(BLresultPath)
                 if(i != len(testCase)):
                     testStr = testCase[i][0] + '/'+ testCase[i][1]
                     # 保存测试用例集信息
@@ -531,26 +518,16 @@ def startTest(request):
                     dataset += testStr
                 setPath = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data',testCase[i][0],testCase[i][1])
                 testSet.append(setPath)
-                path = os.path.join(setPath,'image/*')
+                path = os.path.join(setPath,'*')
                 num += getFileNum(path)
 
             models.PredictTask(taskName=taskName,taskDesc=taskDesc,dataset=dataset,num=num,model=modelName,status='Running').save()
-            doc = SimpleDocTemplate("/Users/zhangshijie/Desktop/SegTest-Data/report/%s.pdf" %taskName)
-            story = []
-            dataLst = dataset.split(' ')
-            addTaskInfo(taskName,story)
             if(type == 'SegNet'):
                 for i in range(testSetNum):
-                    loss,iou,IOUError = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
-                    transSegNetResult(resultPathLst[i],BLresultPathLst[i]+'/')
-                    dataNamePos = len(testSet[i].split('/'))-1
-                    tempLst = testSet[i].split('/')
-                    dataName = tempLst[dataNamePos]
-                    labelPath = '/Users/zhangshijie/Desktop/SegTest-Data/labelAfter/'+dataName
+                    startSegNetPredict(testSet[i],resultPathLst[i],modelName)
             task_data = models.PredictTask.objects.get(taskName=taskName)
             task_data.status = 'Success'
             task_data.save()
-            doc.build(story)
             response['code'] = 200
             response['data'] = True
     except Exception as e:

@@ -115,3 +115,12 @@ class TestResult(models.Model):
 
     class Meta:
         db_table = 'testResult'
+
+class MetaResult(models.Model):
+    dataName = models.CharField(max_length=255,null=False)
+    r1 = models.CharField(max_length=255,null=False)
+    r2 = models.CharField(max_length=255,null=False)
+    r3 = models.CharField(max_length=255,null=False)
+    r4 = models.CharField(max_length=255,null=False)
+    class Meta:
+        db_table = 'metaResult'
