@@ -45,11 +45,6 @@
                 </el-table-column>
               </el-table>
             </el-form-item>
-            <el-form-item>
-              <div class="image">
-                <img :src ="`http://127.0.0.1:8081/fig/${taskName}-${data[0]}.png`" height="500" width="600">
-              </div>
-            </el-form-item>
           </el-form>
         </div>
       </div>

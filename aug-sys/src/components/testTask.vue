@@ -39,14 +39,43 @@
           </el-form>
         </template>
         <template v-if="active === 2">
-          <el-form :model="metrics" ref="metrics" label-width="45%">
-            <el-form-item label="IOU:" prop="UseIOU" required>
-              <el-radio-group v-model="metrics.UseIOU">
+          <el-form :model="metrics" ref="metrics" label-width="40%">
+            <el-form-item label="ErrorRate:">
+              <el-checkbox-group v-model="metrics.checkList">
+                <el-checkbox label="0.05"></el-checkbox>
+                <el-checkbox label="0.10"></el-checkbox>
+                <el-checkbox label="0.15"></el-checkbox>
+                <el-checkbox label="0.20"></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="Customize:">
+              <el-radio-group v-model="metrics.Customize">
                 <el-radio :label=1>Yes</el-radio>
                 <el-radio :label=0>No</el-radio>
               </el-radio-group>
             </el-form-item>
-            <template v-if="metrics.UseIOU === 1">
+            <template v-if="metrics.Customize === 1">
+              <el-form-item label="Set threshold:" prop="threshold">
+                <el-input-number v-model="metrics.threshold"
+                  size="small"
+                  :precision="2"
+                  :step="0.1"
+                  :min="0"
+                  :max="1">
+                </el-input-number>
+              </el-form-item>
+            </template>
+          </el-form>
+        </template>
+        <!-- <template v-if="active === 2">
+          <el-form :model="metrics" ref="metrics" label-width="45%"> -->
+            <!-- <el-form-item label="IOU:" prop="UseIOU" required>
+              <el-radio-group v-model="metrics.UseIOU">
+                <el-radio :label=1>Yes</el-radio>
+                <el-radio :label=0>No</el-radio>
+              </el-radio-group>
+            </el-form-item> -->
+            <!-- <template v-if="metrics.UseIOU === 1">
               <el-form-item label="IOU threshold:" prop="IOU">
                 <el-input-number v-model="metrics.IOU"
                   size="small"
@@ -90,9 +119,9 @@
                   :max="1">
                 </el-input-number>
               </el-form-item>
-            </template>
-          </el-form>
-        </template>
+            </template> -->
+          <!-- </el-form>
+        </template> -->
       </div>
       <div class="form-button">
         <el-form style="text-align:right">
@@ -125,12 +154,9 @@ export default {
         testCase: []
       },
       metrics: {
-        UseIOU: 1,
-        UseUSE: 1,
-        UseOSE: 1,
-        IOU: 0.5,
-        USE: 0.5,
-        OSE: 0.5
+        checkList: ['0.05', '0.10', '0.15', '0.20'],
+        Customize: 0,
+        threshold: 0.30
       },
       modelOptions: [],
       testCaseOptions: [

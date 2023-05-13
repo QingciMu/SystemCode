@@ -153,7 +153,7 @@ def uploadDataset(request):
                 for chunk in file_obj.chunks():
                     f.write(chunk)
             fileName = str(file_obj.name).split('.')[0]
-            num = len(glob.glob(os.path.join(head_path,fileName,'image/*')))
+            num = len(glob.glob(os.path.join(head_path,fileName,'*')))
             new_dataset = models.dataset(name=fileName,num=num)
             new_dataset.save()
             response['code'] = 200
@@ -492,18 +492,6 @@ def startTest(request):
             taskDesc = data['taskDesc']
             modelName = data['model']
             testCase = data['testCase']
-            UseIOU =data['UseIOU']
-            UseUSE = data['UseUSE']
-            UseOSE = data['UseOSE']
-            if(UseIOU == 1):
-                min_iou = data['IOU']
-                models.Threshold(taskName=taskName,metric='IOU',threshold=str(min_iou)).save()
-            if (UseUSE == 1):
-                min_use = data['USE']
-                models.Threshold(taskName=taskName,metric='USE',threshold=str(min_use)).save()
-            if(UseOSE == 1):
-                min_ose = data['OSE']
-                models.Threshold(taskName=taskName,metric='OSE',threshold=str(min_ose)).save()
             testSet = []
             dataset = ""
             num= 0
@@ -553,16 +541,12 @@ def startTest(request):
             addTaskInfo(taskName,story)
             if(type == 'SegNet'):
                 for i in range(testSetNum):
-                    loss,iou,IOUError = startSegNetPredict(testSet[i],resultPathLst[i],modelName,min_iou)
+                    loss,iou,IOUError = startSegNetPredict(testSet[i],resultPathLst[i],modelName)
                     transSegNetResult(resultPathLst[i],BLresultPathLst[i]+'/')
                     dataNamePos = len(testSet[i].split('/'))-1
                     tempLst = testSet[i].split('/')
                     dataName = tempLst[dataNamePos]
                     labelPath = '/Users/zhangshijie/Desktop/SegTest-Data/labelAfter/'+dataName
-                    USERate,OSERate = getErrorResult(BLresultPathLst[i],labelPath,min_use,min_use)
-                    models.TestResult(taskName=taskName,dataset=dataLst[i],IOU=str(IOUError),OSE=str(OSERate),USE=str(USERate)).save()
-                    drawPicture(UseIOU,UseOSE,UseUSE,IOUError,OSERate,USERate,taskName,dataName)
-                    story = addTestResult(dataLst[i],story,loss,iou)
             task_data = models.PredictTask.objects.get(taskName=taskName)
             task_data.status = 'Success'
             task_data.save()

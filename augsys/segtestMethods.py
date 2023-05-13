@@ -14,14 +14,11 @@ from augsys.generalMethod import *
 
 
 
-def objectInsertion(labelName,imageName,obj,insertpoint,times,method,taskName):
-    image_name = getImgName(imageName,8)
-    newImagename = '/Users/zhangshijie/Desktop/SegTest-Data/AugResult/'+taskName+'/image/'+image_name+'_'+method+'_'+str(times)+'.png'
-    newLabelname = '/Users/zhangshijie/Desktop/SegTest-Data/AugResult/'+taskName+'/label/'+image_name+'_'+method+'_'+str(times)+'.png'
+def objectInsertion(imageName,obj,insertpoint,times,method,taskName):
+    image_name = getImgName(imageName,7)
+    newImagename = '/Users/zhangshijie/Desktop/SegTest-Data/AugResult/'+taskName+'/'+image_name+'_'+method+'_'+str(times)+'.png'
     img = cv2.imread(imageName)
-    label = cv2.imread(labelName)
     img = cv2.resize(img,(512,256))
-    label = cv2.resize(label,(512,256))
     objimg = cv2.imread(obj)
     objimg = cv2.resize(objimg,(int(objimg.shape[1]/4),int(objimg.shape[0]/4)))
     centroid = (int(objimg.shape[0]/2),int(objimg.shape[1]/2))
@@ -32,13 +29,8 @@ def objectInsertion(labelName,imageName,obj,insertpoint,times,method,taskName):
                 continue
             if any(objimg[i][j] != [0,0,0]):
                 img[i+realinsertpoint[0]][j+realinsertpoint[1]] = objimg[i][j]
-                if('car' in obj):
-                    label[i+realinsertpoint[0]][j+realinsertpoint[1]] = [26,26,26]
-                else:
-                    label[i + realinsertpoint[0]][j + realinsertpoint[1]] = [24,24,24]
     cv2.imwrite(newImagename, img)
-    cv2.imwrite(newLabelname, label)
-    return newImagename,newLabelname
+    return newImagename
 
 
 # starttime = time.time()  # 开始记录
@@ -53,7 +45,7 @@ def getFormInfo(data):
     instance = data['instances']
     methods =data['methods']
     head_path = '/Users/zhangshijie/Desktop/SegTest-Data/dataset'
-    raw_img = os.path.join(head_path,dataset,'image/*')
+    raw_img = os.path.join(head_path,dataset,'*')
     img_list = sorted(glob.glob(raw_img))
     file_num = len(methods) * times * len(img_list)
     new_task = models.AugTask(name=name, desc=desc, fileType='Image', dataset=dataset, times=times, num=file_num,
@@ -84,16 +76,11 @@ def getInsAndPos(instance):
 def segtestAug(data):
     name,desc,dataset,times,instance,methods = getFormInfo(data)
     aug_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',name)
-    aug_img_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',name,'image')
-    aug_label_path = os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult', name, 'label')
+    zip_path =os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/AugResult',name+'.zip')
+
     if not os.path.exists(aug_path):
         os.mkdir((aug_path))
-    if not os.path.exists(aug_img_path):
-        os.mkdir(aug_img_path)
-    if not os.path.exists(aug_label_path):
-        os.mkdir(aug_label_path)
-    imageLst = glob.glob(os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',dataset +'/image/*'))
-    labelLst = glob.glob(os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',dataset +'/label/*'))
+    imageLst = glob.glob(os.path.join('/Users/zhangshijie/Desktop/SegTest-Data/Dataset',dataset +'/*'))
     methodName = ['Random','RandomInst','RandomPos','NoRandom']
     instLst,posLst = getInsAndPos(instance)
     randomPos = []
@@ -106,29 +93,30 @@ def segtestAug(data):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(randomPos)
-                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[0],name)
+                objectInsertion(imageLst[i],obj,pos,j,methodName[0],name)
     if 'RandomInstance' in methods:
         models.Methods(taskName=name,method='Random Instance').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(posLst)
-                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[1],name)
+                objectInsertion(imageLst[i],obj,pos,j,methodName[1],name)
     if 'RandomInsertion' in methods:
         models.Methods(taskName=name,method='Random Insertion').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(randomPos)
-                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[2],name)
+                objectInsertion(imageLst[i],obj,pos,j,methodName[2],name)
     if 'SegTest' in methods:
         models.Methods(taskName=name,method='No Random').save()
         for i in range(len(imageLst)):
             for j in range(times):
                 obj = random.choice(instLst)
                 pos = random.choice(posLst)
-                objectInsertion(labelLst[i],imageLst[i],obj,pos,j,methodName[3],name)
+                objectInsertion(imageLst[i],obj,pos,j,methodName[3],name)
     task_data = models.AugTask.objects.get(name=name)
     task_data.status = 'Success'
+    zipDir(aug_path,zip_path)
     task_data.save()
     return True
